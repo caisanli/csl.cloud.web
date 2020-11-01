@@ -1,0 +1,21 @@
+.aside {
+  color: #fff;
+}
+.nav {
+  &-item {
+    transition: all 0.2s;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 10px 0 10px 20px;
+    & > span:only-child {
+      margin-left: 20px;
+    }
+    @activeBgColor: rgba(240, 242, 245, 0.2);
+    &:hover {
+      background-color: @activeBgColor;
+    }
+    &.active {
+      background-color: @activeBgColor;
+    }
+  }
+}
