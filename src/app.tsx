@@ -1,4 +1,4 @@
-import {  } from 'antd';
+import {} from 'antd';
 interface route {
   path?: string;
   component?: any;
@@ -15,11 +15,10 @@ interface route {
  * ps：和 render 配置配合使用，请求服务端根据响应动态更新路由，
  */
 export function patchRoutes({ routes }) {
-  // routes.unshift({
-  //   path: '/foo',
-  //   exact: true,
-  //   component: require('@/extraRoutes/foo').default,
-  // });
+  routes.push({
+    path: '*',
+    component: require('@/pages/404').default,
+  });
 }
 /**
  * 覆盖render
