@@ -13,9 +13,9 @@ export default defineConfig({
   // 静态资源访问
   publicPath: './',
   alias: {
-    '@comp': resolve('./src/components'),
-    '@utils': resolve('./src/utils'),
-    '@assets': resolve('./src/assets'),
+    'comp': resolve('./src/components'),
+    'utils': resolve('./src/utils'),
+    'assets': resolve('./src/assets'),
   },
   cssLoader: {
     localsConvention: 'camelCase', // css类名驼峰

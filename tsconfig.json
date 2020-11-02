@@ -11,9 +11,9 @@
     "strict": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@comp/*": ["./src/components/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@utils/*": ["./src/utils/*"],
+      "comp/*": ["./src/components/*"],
+      "assets/*": ["./src/assets/*"],
+      "utils/*": ["./src/utils/*"],
       "@@/*": ["./src/.umi/*"]
     },
     "allowSyntheticDefaultImports": true,
