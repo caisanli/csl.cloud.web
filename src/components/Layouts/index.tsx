@@ -15,7 +15,7 @@ export default (props: IRouteComponentProps) => {
         <Head />
       </Header>
       <Layout>
-        <Sider>
+        <Sider style={{ overflow: 'hidden' }}>
           <Aside />
         </Sider>
         <Content>

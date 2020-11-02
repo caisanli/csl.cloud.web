@@ -1,14 +1,37 @@
+// 工具栏
 .toolbar {
+  display: flex;
   padding: 0 10px;
-  &-left {
+  justify-content: space-between;
+  &-left, &-right {
     display: flex;
   }
   &-right {
+    justify-content: flex-end;
   }
   .upload-btn {
     margin-right: 15px;
   }
-  .tool-btn:not(:last-child) {
-    border-right: none;
+}
+// 面包屑
+.crumb {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  &-item {
+    cursor: pointer;
+    color: @primary-color;
+    &:hover {
+      text-decoration: underline;
+      color: @link-hover-color;
+    }
+    &-icon {
+      color: @shadow-color;
+      font-size: 12px;
+      margin: 0 3px;
+      &:last-child {
+        display: none;
+      }
+    }
   }
 }
