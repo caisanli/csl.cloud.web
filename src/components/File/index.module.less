@@ -18,20 +18,29 @@
   display: flex;
   justify-content: space-between;
   padding: 5px 10px;
+  &-left {
+    display: flex;
+    align-items: center;
+  }
   &-item {
-    cursor: pointer;
-    color: @primary-color;
-    &:hover {
-      text-decoration: underline;
-      color: @link-hover-color;
-    }
     &-icon {
       color: @shadow-color;
       font-size: 12px;
       margin: 0 3px;
-      &:last-child {
+    }
+    &:last-child {
+      .crumb-item-icon {
         display: none;
       }
     }
+    &-name {
+      cursor: pointer;
+      color: @primary-color;
+      &:hover {
+        text-decoration: underline;
+        color: @link-hover-color;
+      }
+    }
   }
+
 }

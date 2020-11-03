@@ -62,7 +62,7 @@ export default function File(props: IFileContainerProps) {
       {/* 面包屑 */}
       <Crumb crumbs={crumbs} />
       {/* 列表 */}
-      <List style='icon' files={[]} folders={[]} />
+      <List style='table' data={props.data} />
     </>
   );
 }

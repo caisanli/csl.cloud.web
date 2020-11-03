@@ -1,7 +1,6 @@
 import React from 'react';
 interface IProps {
-  files: [],
-  folders: []
+  data: []
 }
 export default function(props: IProps) {
   return (

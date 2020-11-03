@@ -22,15 +22,15 @@ export default function (props: IProps) {
   return (
     <div className={styles.crumb}>
       <div className={styles.crumbLeft}>
-        {props.crumbs.length ? (<><span className={ styles.crumbItem }>返回上一级</span><Divider type="vertical" /></>) : <span>全部文件</span>}
+        {props.crumbs.length ? (<div className={styles.crumbItem}><span className={ styles.crumbItemName }>返回上一级</span><Divider type="vertical" /></div>) : <span>全部文件</span>}
 
         {
           props.crumbs.map(
             item => (
-              <>
-                <span onClick={ () => onClickCrumb(item) } className={ styles.crumbItem }>{item.name}</span>
+              <div key={item.id} className={ styles.crumbItem }>
+                <span onClick={ () => onClickCrumb(item) } className={ styles.crumbItemName }>{item.name}</span>
                 <RightOutlined className={ styles.crumbItemIcon } />
-              </>
+              </div>
             )
           )
         }

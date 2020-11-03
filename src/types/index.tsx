@@ -9,8 +9,7 @@ interface INavItem {
   children?: INavItem[];
 }
 interface IFileContainerProps {
-  files: [];
-  dirs?: [];
+  data: [];
   canCreateFolder?: boolean;
   type: 'person' | 'group';
 }

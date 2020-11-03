@@ -3,8 +3,7 @@ import IconList from './icon';
 import TableList from './table';
 interface IProps {
   style: 'table' | 'icon';
-  files: [],
-  folders: []
+  data: []
 }
 
 export default function(props: IProps) {
