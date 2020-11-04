@@ -1,9 +1,7 @@
 import React from 'react';
 interface IProps {
-  data: []
+  data: any[];
 }
 export default function(props: IProps) {
-  return (
-    <div></div>
-  )
+  return <div></div>;
 }
