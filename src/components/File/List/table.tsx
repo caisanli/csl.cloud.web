@@ -19,6 +19,8 @@ export default function(props: IProps) {
   }]
   return (
     <Table
+      select
+      dataIndex="id"
       columns={columns}
       dataSource={ props.data }
     />
