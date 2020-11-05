@@ -1,6 +1,9 @@
 .table {
   display: table;
   width: 100%;
+  &-fixed {
+    table-layout: fixed;
+  }
   .thead {
     display: table-header-group;
     .th {
@@ -14,9 +17,9 @@
     display: table-row-group;
     .tr {
       background-color: #fff;
-       &:hover {
-         background-color: @item-hover-bg;
-       }
+      &:hover {
+        background-color: @item-hover-bg;
+      }
     }
     .td {
       border-bottom: 1px solid @border-color-split;
@@ -26,17 +29,48 @@
     display: table-row;
     width: 100%;
   }
-  .th, .td {
-    padding: 5px 0 5px 10px;
+  .th,
+  .td {
+    padding: 7px 0 7px 10px;
     display: table-cell;
     &.select {
       width: 30px;
+    }
+    &.ellipsis {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }
 .contextMenu {
   position: fixed;
   &-content {
-    box-shadow: 0 0 0 3px #ddd;
+    box-shadow: 0 0 2px 2px #dbe9f5;
+    border: 1px solid #bfbfbf;
+    border-radius: 2px;
+    background-color: #fff;
+  }
+  ul,
+  li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    width: 85px;
+    padding: 5px 0 5px 15px;
+    cursor: pointer;
+    font-size: 12px;
+    &:not(:last-child) {
+      border-bottom: 1px solid @border-color-split;
+    }
+    &:hover {
+      background-color: @item-hover-bg;
+    }
+  }
+  .menu-icon {
+    font-size: 14px;
+    margin-right: 3px;
   }
 }
