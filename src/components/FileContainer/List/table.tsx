@@ -1,4 +1,5 @@
 import React from 'react';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import Table from '@/components/Table';
 interface IProps {
   data: any[];
@@ -10,6 +11,11 @@ export default function(props: IProps) {
       key: '01',
       label: '文件名',
       value: 'name',
+      width: '50%',
+      ellipsis: true,
+      render(data: any) {
+        return data.name;
+      },
     },
     {
       key: '02',
@@ -22,14 +28,27 @@ export default function(props: IProps) {
       value: 'modifyDate',
     },
   ];
-  const contextMenu = [{
-    name: '删除',
-    value: 'delete'
-  },{
-    name: '编辑',
-    value: 'update'
-  }]
+  const contextMenu = [
+    {
+      name: '删除',
+      value: 'delete',
+      icon: <DeleteOutlined />,
+    },
+    {
+      name: '编辑',
+      value: 'update',
+      icon: <EditOutlined />,
+    },
+  ];
   return (
-    <Table select selecting contextMenu={ contextMenu } dataIndex="id" columns={columns} dataSource={props.data} scrollSelector={props.scrollSelector} />
+    <Table
+      select
+      selecting
+      contextMenu={contextMenu}
+      dataIndex="id"
+      columns={columns}
+      dataSource={props.data}
+      scrollSelector={props.scrollSelector}
+    />
   );
 }
