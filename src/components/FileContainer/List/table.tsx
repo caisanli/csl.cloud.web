@@ -2,6 +2,7 @@ import React from 'react';
 import Table from '@/components/Table';
 interface IProps {
   data: any[];
+  scrollSelector?: string | Element;
 }
 export default function(props: IProps) {
   const columns = [
@@ -21,7 +22,14 @@ export default function(props: IProps) {
       value: 'modifyDate',
     },
   ];
+  const contextMenu = [{
+    name: '删除',
+    value: 'delete'
+  },{
+    name: '编辑',
+    value: 'update'
+  }]
   return (
-    <Table select dataIndex="id" columns={columns} dataSource={props.data} />
+    <Table select selecting contextMenu={ contextMenu } dataIndex="id" columns={columns} dataSource={props.data} scrollSelector={props.scrollSelector} />
   );
 }
