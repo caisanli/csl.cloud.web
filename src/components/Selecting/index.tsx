@@ -82,14 +82,15 @@ export default class Selecting extends React.Component<IProps, IState> {
       this.prevLeft = left;
       this.prevTop = top;
       this.setState({ top, left });
-    }, 200)
+    }, 200);
   }
   // mousemove
   mouseMove(e) {
     if (this.isDown) {
       let { clientX, clientY } = e;
       let width = clientX - this.startX;
-      let height = clientY - this.startY + this.scrollElem.scrollTop  - this.prevScrollTop;
+      let height =
+        clientY - this.startY + this.scrollElem.scrollTop - this.prevScrollTop;
       let { top, left } = this.state;
       if (width < 0) {
         left = this.prevLeft + width;
@@ -111,16 +112,20 @@ export default class Selecting extends React.Component<IProps, IState> {
     }
   }
   selecting() {
-    let { top, height } = this.state;
+    let { top, height, left, width } = this.state;
     top += this.elemOffset.top;
     let selectElem: ISelect[] = [];
     this.elemList.forEach(elem => {
-      if (elem.top + elem.height >= top && elem.top <= top + height) {
+      if (
+        elem.top + elem.height >= top &&
+        elem.top <= top + height &&
+        elem.left + elem.width >= left &&
+        elem.left <= left + width
+      ) {
         selectElem.push(elem);
       }
     });
-    if (this.props.onSelect)
-      this.props.onSelect(selectElem);
+    if (this.props.onSelect) this.props.onSelect(selectElem);
   }
   // mouseup
   mouseUp() {
@@ -144,9 +149,11 @@ export default class Selecting extends React.Component<IProps, IState> {
   }
   setScrollSelector() {
     const scrollSelector = this.props.scrollSelector;
-    if(!scrollSelector)
-      return ;
-    this.scrollElem = typeof scrollSelector === 'string' ? document.querySelector(scrollSelector) : scrollSelector;
+    if (!scrollSelector) return;
+    this.scrollElem =
+      typeof scrollSelector === 'string'
+        ? document.querySelector(scrollSelector)
+        : scrollSelector;
   }
   componentWillUnmount() {
     document.removeEventListener('mousemove', this.mouseMove);
@@ -158,11 +165,14 @@ export default class Selecting extends React.Component<IProps, IState> {
       top: top + 'px',
       left: left + 'px',
       width: width + 'px',
-      height: height + 'px'
+      height: height + 'px',
     };
     return (
       <div className={styles.selecting} onMouseDown={this.onMouseDown}>
-        <div className={[styles.frame, this.isDown ? styles.active : ''].join(' ')} style={frameStyle}></div>
+        <div
+          className={[styles.frame, this.isDown ? styles.active : ''].join(' ')}
+          style={frameStyle}
+        ></div>
         {this.props.children}
       </div>
     );
