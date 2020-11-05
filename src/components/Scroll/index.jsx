@@ -46,7 +46,10 @@ class Scroll extends React.Component {
     this.scrollBarWidth = this._getBarWidth();
     this._events();
     this._setThumbWidthHeight();
-    if (this.props.center) this._setScrollCenter();
+    if(typeof this.props.onRef === 'function')
+      this.props.onRef(this.$content.current)
+    if (this.props.center)
+      this._setScrollCenter();
   }
   componentWillUnmount() {
     // 销毁之前
@@ -296,6 +299,7 @@ Scroll.propTypes = {
   y: PropTypes.bool,
   center: PropTypes.bool,
   visible: PropTypes.bool,
+  onRef: PropTypes.func
 };
 Scroll.defaultProps = {
   x: true,
