@@ -6,13 +6,20 @@
     .th {
       border-bottom: 1px solid @border-color-base;
     }
+    position: sticky;
+    top: 0;
+    left: 0;
   }
   .tbody {
     display: table-row-group;
     .tr {
+      background-color: #fff;
        &:hover {
          background-color: @item-hover-bg;
        }
+    }
+    .td {
+      border-bottom: 1px solid @border-color-split;
     }
   }
   .tr {
@@ -25,5 +32,11 @@
     &.select {
       width: 30px;
     }
+  }
+}
+.contextMenu {
+  position: fixed;
+  &-content {
+    box-shadow: 0 0 0 3px #ddd;
   }
 }
