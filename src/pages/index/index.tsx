@@ -1,8 +1,8 @@
 import React from 'react';
-import FileContainer from '@/components/File';
+import FileContainer from '@/components/FileContainer';
 export default function Index() {
   let data: any[] = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 300; i++) {
     data.push({
       id: i,
       name: '文件 - ' + i,
