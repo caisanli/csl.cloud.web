@@ -1,8 +1,9 @@
-import React, { ReactElement, ReactNode, ReactNodeArray } from 'react';
+import React, { ReactElement } from 'react';
+import { IContextMenu } from '@/types';
 import Selecting from '@/components/Selecting';
 import { Checkbox } from 'antd';
 import styles from './index.module.less';
-interface IColumn {
+export interface IColumn {
   key: string; // 唯一值
   label: string; // 表头名称
   value: string; // 对应数据的key
@@ -11,26 +12,24 @@ interface IColumn {
   ellipsis?: boolean; // 是否显示省略号
   [key: string]: any;
 }
-interface IContextMenu {
-  value: string;
-  name: string;
-  icon?: ReactNode;
-}
+
 interface IProps {
-  columns: IColumn[]; // 表格列的配置描述 {key, keyMap}
+  columns?: IColumn[]; // 表格列的配置描述 {key, keyMap}
   dataIndex: string; // 唯一值
   dataSource: any[]; // 数据数组
   scrollSelector?: string | HTMLElement | Element; // 滚动区域元素
   select?: boolean; // 是否有选择框
   selecting?: boolean; // 是否框选
   contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]); // 右键菜单
-  onClickContextMenu?: (item: IContextMenu, data: any) => void;
 }
 interface IState {
   checked: any[];
   contextMenu: boolean;
   contextMenuLeft: number;
   contextMenuTop: number;
+}
+const defaultProps = {
+  columns: []
 }
 export default class Table extends React.Component<IProps, IState> {
   constructor(props: IProps) {
@@ -45,6 +44,7 @@ export default class Table extends React.Component<IProps, IState> {
     this.onClickCheckAllBtn = this.onClickCheckAllBtn.bind(this);
     this.onSelect = this.onSelect.bind(this);
   }
+  static defaultProps = defaultProps;
   // 记录是否全选
   public checkAll = false;
   // 右键菜单时的data
@@ -124,8 +124,8 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 点击右键菜单
   onClickContextMenu(item: IContextMenu) {
-    if (typeof this.props.onClickContextMenu === 'function')
-      this.props.onClickContextMenu(item, this.contextMenuData);
+    if (typeof item.onClick === 'function')
+      item.onClick(this.contextMenuData);
   }
   // 生成右键菜单
   createContextMenu() {
@@ -166,7 +166,7 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 生成表头
   createHead() {
-    const { dataSource } = this.props;
+    const { dataSource, columns } = this.props;
     const { checked } = this.state;
     return (
       <div className={styles.thead}>
@@ -182,7 +182,7 @@ export default class Table extends React.Component<IProps, IState> {
               />
             </div>
           ) : null}
-          {this.props.columns.map(col => {
+          {columns && columns.map(col => {
             return (
               <div
                 key={col.key}
@@ -202,6 +202,7 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 生成body
   createBody() {
+    const { columns } = this.props;
     return (
       <div className={styles.tbody}>
         {this.props.dataSource.map(data => {
@@ -217,7 +218,7 @@ export default class Table extends React.Component<IProps, IState> {
                   <Checkbox checked={this.isChecked(data)} />
                 </div>
               ) : null}
-              {this.props.columns.map(col => {
+              {columns && columns.map(col => {
                 return (
                   <div
                     key={col.key}
@@ -238,7 +239,9 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 生成表格
   createTable() {
-    const fixed = !!this.props.columns.find(col => col.ellipsis);
+    const { columns } = this.props;
+    if(!columns) return null;
+    const fixed = !!columns.find(col => col.ellipsis);
     return (
       <div className={[styles.table, fixed ? styles.tableFixed : ''].join(' ')}>
         {this.createHead()}

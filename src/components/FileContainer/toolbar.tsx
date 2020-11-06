@@ -1,18 +1,15 @@
 import React, { ReactNode, useState } from 'react';
 import { Upload, Button, Input, Dropdown, Menu } from 'antd';
+import { IToolBar } from "@/types";
 import { UploadOutlined, FolderAddOutlined, SortAscendingOutlined, CheckOutlined, SortDescendingOutlined, AppstoreOutlined, MenuOutlined } from '@ant-design/icons';
 import styles from './index.module.less';
 const { Search } = Input;
-interface ITool {
-  name: string;
-  icon?: ReactNode;
-  type: string;
-}
 
 interface IProps {
   canCreateFolder?: boolean;
-  tools: ITool[];
-  onClick?: (type: string) => void;
+  tools: IToolBar[];
+  onSearch?: (name: string) => void;
+  onCreateFolder?: () => void;
 }
 
 export default function(props: IProps) {
@@ -20,16 +17,17 @@ export default function(props: IProps) {
    * 点击工具栏按钮
    * @param tool
    */
-  function onClick(tool: ITool) {
-    const type = tool.type || '';
-    props.onClick && props.onClick(type);
+  function onClick(tool: IToolBar) {
+    if(tool.onClick)
+      tool.onClick();
   }
   /**
    * 搜索文件
    * @param value
    */
   function onSearch(value: string) {
-    console.log('搜索：' + value);
+    if(props.onSearch)
+      props.onSearch(value)
   }
 
   /**
@@ -41,7 +39,6 @@ export default function(props: IProps) {
       setAscending(!isAscending);
     }
     setSortActive(e.key);
-    console.log('点击排序：', e);
   }
   // 排序菜单
   const sortMenus = [{name: '文件名', value: 'fileName'}, {name: '大小', value: 'size'}, {name: '修改日期', value: 'modifyDate'}]
@@ -81,7 +78,7 @@ export default function(props: IProps) {
           </Button>
         </Upload>
         {props.canCreateFolder ? (
-          <Button style={{ marginRight: '10px' }} icon={<FolderAddOutlined />}>
+          <Button onClick={ props.onCreateFolder } style={{ marginRight: '10px' }} icon={<FolderAddOutlined />}>
             新建文件夹
           </Button>
         ) : null}
