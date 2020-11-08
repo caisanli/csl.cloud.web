@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
+import React, { FC } from 'react';
+import { history, AsideModelState, ConnectProps, connect } from 'umi';
 import { INavItem } from '@/types';
 import IconFont from '@/components/IconFont';
 import styles from './index.module.less';
-import nav from './nav';
 
-export default function Aside() {
-  const [active, setActive] = useState(nav[0].value);
+interface IProps extends ConnectProps {
+  aside: AsideModelState;
+}
+
+const IndexPage: FC<IProps> = function(props) {
+  const menu = props.aside.menu;
+  const active = props.aside.active;
   function onClickNav(item: INavItem) {
-    setActive(item.value);
+    props.dispatch &&
+      props.dispatch({
+        type: 'aside/setActive',
+        payload: {
+          ...props.aside,
+          active: item.value,
+        },
+      });
+    localStorage.setItem('asideNavActive', item.value);
+    history.push(item.path);
   }
   const iconStyle = {
     marginRight: '5px',
   };
   return (
     <div className={styles.aside}>
-      {nav.map(item => (
+      {menu.map(item => (
         <div
           onClick={() => onClickNav(item)}
           className={[
@@ -29,4 +43,8 @@ export default function Aside() {
       ))}
     </div>
   );
-}
+};
+const mapStateProps = state => ({
+  aside: state.aside,
+});
+export default connect(mapStateProps)(IndexPage);
