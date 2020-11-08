@@ -47,7 +47,7 @@ export function render(oldRender) {
  * ps：比如用于设置标题
  */
 export function onRouteChange({ location, routes, action }) {
-  console.log(location);
+  // console.log(location);
 }
 
 /**
