@@ -29,8 +29,8 @@ interface IState {
   contextMenuTop: number;
 }
 const defaultProps = {
-  columns: []
-}
+  columns: [],
+};
 export default class Table extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
@@ -124,8 +124,7 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 点击右键菜单
   onClickContextMenu(item: IContextMenu) {
-    if (typeof item.onClick === 'function')
-      item.onClick(this.contextMenuData);
+    if (typeof item.onClick === 'function') item.onClick(this.contextMenuData);
   }
   // 生成右键菜单
   createContextMenu() {
@@ -182,20 +181,21 @@ export default class Table extends React.Component<IProps, IState> {
               />
             </div>
           ) : null}
-          {columns && columns.map(col => {
-            return (
-              <div
-                key={col.key}
-                className={[
-                  styles.th,
-                  col.ellipsis ? styles.ellipsis : '',
-                ].join(' ')}
-                style={this.columnWidth(col)}
-              >
-                {col.label}
-              </div>
-            );
-          })}
+          {columns &&
+            columns.map(col => {
+              return (
+                <div
+                  key={col.key}
+                  className={[
+                    styles.th,
+                    col.ellipsis ? styles.ellipsis : '',
+                  ].join(' ')}
+                  style={this.columnWidth(col)}
+                >
+                  {col.label}
+                </div>
+              );
+            })}
         </div>
       </div>
     );
@@ -218,19 +218,20 @@ export default class Table extends React.Component<IProps, IState> {
                   <Checkbox checked={this.isChecked(data)} />
                 </div>
               ) : null}
-              {columns && columns.map(col => {
-                return (
-                  <div
-                    key={col.key}
-                    className={[
-                      styles.td,
-                      col.ellipsis ? styles.ellipsis : '',
-                    ].join(' ')}
-                  >
-                    {col.render ? col.render(data) : data[col.value]}
-                  </div>
-                );
-              })}
+              {columns &&
+                columns.map(col => {
+                  return (
+                    <div
+                      key={col.key}
+                      className={[
+                        styles.td,
+                        col.ellipsis ? styles.ellipsis : '',
+                      ].join(' ')}
+                    >
+                      {col.render ? col.render(data) : data[col.value]}
+                    </div>
+                  );
+                })}
             </div>
           );
         })}
@@ -240,7 +241,7 @@ export default class Table extends React.Component<IProps, IState> {
   // 生成表格
   createTable() {
     const { columns } = this.props;
-    if(!columns) return null;
+    if (!columns) return null;
     const fixed = !!columns.find(col => col.ellipsis);
     return (
       <div className={[styles.table, fixed ? styles.tableFixed : ''].join(' ')}>
@@ -267,6 +268,9 @@ export default class Table extends React.Component<IProps, IState> {
   }
   componentWillUnmount() {
     document.removeEventListener('click', this.onClickBody.bind(this));
+    this.setState = (state, callback) => {
+      return;
+    };
   }
   render() {
     if (this.props.selecting) {

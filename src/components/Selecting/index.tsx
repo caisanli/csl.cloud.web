@@ -144,7 +144,6 @@ export default class Selecting extends React.Component<IProps, IState> {
     document.addEventListener('mouseup', this.mouseUp.bind(this));
     setTimeout(() => {
       this.elemOffset = getOffset(this.elem);
-      this.setScrollSelector();
     }, 0);
   }
   setScrollSelector() {
@@ -158,6 +157,12 @@ export default class Selecting extends React.Component<IProps, IState> {
   componentWillUnmount() {
     document.removeEventListener('mousemove', this.mouseMove);
     document.removeEventListener('mouseup', this.mouseUp);
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+  componentDidUpdate() {
+    if (!this.scrollElem) this.setScrollSelector();
   }
   render() {
     let { width, height, top, left } = this.state;
