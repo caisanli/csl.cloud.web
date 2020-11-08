@@ -42,20 +42,21 @@ class Scroll extends React.Component {
     };
   }
   componentDidMount() {
-    // 挂载完成
-    this.scrollBarWidth = this._getBarWidth();
-    this._events();
-    this._setThumbWidthHeight();
-    if(typeof this.props.onRef === 'function')
-      this.props.onRef(this.$content.current)
-    if (this.props.center)
-      this._setScrollCenter();
+    setTimeout(() => {
+      // 挂载完成
+      this.scrollBarWidth = this._getBarWidth();
+      this._events();
+      this._setThumbWidthHeight();
+      if (typeof this.props.onRef === 'function')
+        this.props.onRef(this.$content.current);
+      if (this.props.center) this._setScrollCenter();
+    }, 0);
   }
   componentWillUnmount() {
     // 销毁之前
-    let { x, y } = this.props;
-    x && document.removeEventListener('mousemove', this._onXMouseMove);
-    y && document.removeEventListener('mousemove', this._onYMouseMove);
+    // let { x, y } = this.props;
+    document.removeEventListener('mousemove', this._onXMouseMove);
+    document.removeEventListener('mousemove', this._onYMouseMove);
     document.removeEventListener('mouseup', this._onMouseup);
     window.removeEventListener('resize', this._onResize);
   }
@@ -299,7 +300,7 @@ Scroll.propTypes = {
   y: PropTypes.bool,
   center: PropTypes.bool,
   visible: PropTypes.bool,
-  onRef: PropTypes.func
+  onRef: PropTypes.func,
 };
 Scroll.defaultProps = {
   x: true,
