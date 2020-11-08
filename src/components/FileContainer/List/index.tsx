@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import React, { FC, useState } from 'react';
 import Scroll from '@/components/Scroll';
-import { IContextMenu, ITableIconProps } from '@/types';
+import { ITableIconProps } from '@/types';
+import { FileModelState, ConnectProps, connect } from 'umi';
 import { IColumn } from '@/components/Table';
 import IconList from './icon';
 import TableList from './table';
 import styles from './index.module.less';
-interface IProps extends ITableIconProps {
-  style: 'table' | 'icon';
+interface IProps extends ITableIconProps {}
+interface IProps extends ConnectProps {
+  file: FileModelState;
 }
 const columns: IColumn[] = [
   {
@@ -32,18 +33,21 @@ const columns: IColumn[] = [
   },
 ];
 
-export default function(props: IProps) {
-  const { style, ...otherProps } = props;
-  const List = props.style === 'icon' ? IconList : TableList;
+const IndexPage: FC<IProps> = function(props: IProps) {
+  const List = props.file.style === 'icon' ? IconList : TableList;
   const [elem, setElem] = useState();
   function onRef(elem) {
-    setElem(elem)
+    setElem(elem);
   }
   return (
-    <div className={ styles.list } id="list">
-      <Scroll onRef={ onRef }>
-        <List {...otherProps} columns={ columns } />
+    <div className={styles.list} id="list">
+      <Scroll onRef={onRef}>
+        <List {...props} columns={columns} scrollSelector={elem} />
       </Scroll>
     </div>
   );
-}
+};
+const mapStateProps = state => ({
+  file: state.file,
+});
+export default connect(mapStateProps)(IndexPage);
