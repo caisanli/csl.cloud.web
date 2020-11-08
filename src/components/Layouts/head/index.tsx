@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { history } from 'umi';
 import { INavItem } from '@/types';
 import styles from './index.module.less';
-console.log(styles);
 const nav: INavItem[] = [
   {
     name: '个人',
     value: 'person',
-    path: '/index',
+    path: '/',
   },
   {
     name: '团队',
@@ -17,13 +16,16 @@ const nav: INavItem[] = [
 ];
 
 export default function Head() {
-  const [active, setActive] = useState(nav[0].value);
-
+  const localNavActive = localStorage.getItem('topNavActive');
+  const [active, setActive] = useState(localNavActive || nav[0].value);
+  localStorage.setItem('topNavActive', active);
   function onClickItem(item: INavItem) {
     if (item.value === active) return;
+    localStorage.setItem('asideNavActive', 'file');
+    localStorage.setItem('topNavActive', item.value);
     setActive(item.value);
+    history.push(item.path);
   }
-
   return (
     <div className={styles.head}>
       <div className={styles.headLeft}>
