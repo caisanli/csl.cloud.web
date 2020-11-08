@@ -7,8 +7,11 @@ import '@/assets/css/global.less';
 const { Header } = Layout;
 
 export default function(props: IRouteComponentProps) {
-  if (props.location.pathname === '/login') {
+  const pathname = props.location.pathname;
+  if (pathname === '/login') {
     return <Login />;
+  } else if (pathname.startsWith('/management')) {
+    return props.children;
   }
   return (
     <Layout>
