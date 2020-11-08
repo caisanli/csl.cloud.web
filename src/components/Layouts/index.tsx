@@ -10,18 +10,13 @@ export { Aside, Head, Main };
 
 export default (props: IRouteComponentProps) => {
   return (
-    <Layout>
-      <Header>
-        <Head />
-      </Header>
-      <Layout>
-        <Sider style={{ overflow: 'hidden' }}>
-          <Aside />
-        </Sider>
-        <Content>
-          <Main>{props.children}</Main>
-        </Content>
-      </Layout>
-    </Layout>
+    <>
+      <Sider style={{ overflow: 'hidden' }}>
+        <Aside />
+      </Sider>
+      <Content>
+        <Main>{props.children}</Main>
+      </Content>
+    </>
   );
 };
