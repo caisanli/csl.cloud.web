@@ -95,31 +95,51 @@ export default function Index() {
       formData.append('size', file.size);
       formData.append('chunks', total)
       formData.append('chunk', (index + 1) + '');
-      formData.append('modifyTime', new Date(file.lastModifiedDate).getTime() + '')
+      formData.append('folder', '0');
+      formData.append('modifyDate', new Date(file.lastModifiedDate).getTime() + '')
       let start = index * CHUNK_SIZE;
       let end = CHUNK_SIZE * (index + 1);
       end = end > file.size ? file.size : end;
-      console.log('start：', start)
-      console.log('end：', end)
       formData.append('file', file.slice(start, end))
       fetch('http://127.0.0.1:3000/apis/file/upload', {
           method: 'POST',
           body: formData,
-          credentials: 'same-origin'
+          credentials: 'include'
       }).then(res => {
+          return res.json();
+      }).then(res => {
+        if(res.code === 1)
           upload(total, file, ++index)
-          console.log(res)
       }).catch(err => {
           console.log(err)
       })
   }
 
+  function login() {
+    let body = JSON.stringify({
+      name: '测试125',
+      password: 'Aa123456!'
+    })
+    fetch('http://127.0.0.1:3000/apis/login', {
+      method: 'POST',
+      body,
+      headers: {
+        'content-type': 'application/json'
+      },
+      credentials: 'include'
+    }).then(res => {
+      return res.json();
+    }).then(res => {
+      console.log(res);
+    })
+  }
   return (
     <>
       <FileContainer dataSource={data} type="person" canCreateFolder onCreateFolder={ onCreateFolder } tools={tools} contextMenu={contextMenu} />
       <Folder ref={ folderForm } visible={ folderVisible } onSubmit={ onSubmitCreateFolder } onCancel={ () => setFolderVisible(false) } />
       <Rename ref={ renameForm } visible={ renameVisible } />
       <input type="file" onChange={ fileChange } />
+      <button onClick={ login }>登录</button>
     </>
   );
 }
