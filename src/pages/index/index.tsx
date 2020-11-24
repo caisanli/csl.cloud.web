@@ -100,6 +100,7 @@ export default function Index() {
       let start = index * CHUNK_SIZE;
       let end = CHUNK_SIZE * (index + 1);
       end = end > file.size ? file.size : end;
+      console.log('end：' + end)
       formData.append('file', file.slice(start, end))
       fetch('http://127.0.0.1:3000/apis/file/upload', {
           method: 'POST',
@@ -138,6 +139,8 @@ export default function Index() {
       <FileContainer dataSource={data} type="person" canCreateFolder onCreateFolder={ onCreateFolder } tools={tools} contextMenu={contextMenu} />
       <Folder ref={ folderForm } visible={ folderVisible } onSubmit={ onSubmitCreateFolder } onCancel={ () => setFolderVisible(false) } />
       <Rename ref={ renameForm } visible={ renameVisible } />
+      {/* <video controls src="http://127.0.0.1:3000/apis/file/preview/bc6b041e-2e39-11eb-9234-0123456789ab" /> */}
+      <a target="_blank" href="http://127.0.0.1:3000/apis/file/download/838485ae-2e2e-11eb-9234-0123456789ab">下载</a>
       <input type="file" onChange={ fileChange } />
       <button onClick={ login }>登录</button>
     </>
