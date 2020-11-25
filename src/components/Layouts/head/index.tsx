@@ -2,22 +2,14 @@ import React, { useState } from 'react';
 import { history } from 'umi';
 import { INavItem } from '@/types';
 import styles from './index.module.less';
-const nav: INavItem[] = [
-  {
-    name: '个人',
-    value: 'person',
-    path: '/',
-  },
-  {
-    name: '团队',
-    value: 'group',
-    path: '/group',
-  },
-];
 
-export default function Head() {
+type IProps = {
+  nav: INavItem[]
+}
+
+export default function Head(props: IProps) {
   const localNavActive = localStorage.getItem('topNavActive');
-  const [active, setActive] = useState(localNavActive || nav[0].value);
+  const [active, setActive] = useState(localNavActive || props.nav[0].value);
   localStorage.setItem('topNavActive', active);
   function onClickItem(item: INavItem) {
     if (item.value === active) return;
@@ -31,7 +23,7 @@ export default function Head() {
       <div className={styles.headLeft}>
         <div className={styles.headLogo}>LOGO</div>
         <div className={styles.headNav}>
-          {nav.map((item: INavItem) => (
+          {props.nav.map((item: INavItem) => (
             <div
               key={item.value}
               className={[
