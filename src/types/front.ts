@@ -1,5 +1,6 @@
 import { IColumn } from '@/components/Table';
 import { ReactNode } from 'react';
+import { FormInstance as IFormInstance } from 'rc-field-form/es/interface';
 /**
  * 导航栏
  */
@@ -62,4 +63,5 @@ interface IOperateProps {
   onSubmit?: (data: any) => void;
   onCancel?: () => void
 }
-export { INavItem, IFileContainerProps, ITableIconProps, IContextMenu, IToolBar, IOperateProps };
+
+export { INavItem, IFileContainerProps, ITableIconProps, IContextMenu, IToolBar, IOperateProps, IFormInstance };

@@ -21,6 +21,7 @@ const codeMessage = {
 };
 
 const errorHandler = error => {
+  console.log(error)
   if(!error) throw error ;
   if (error.response) {
     const response = error.response;
@@ -48,11 +49,13 @@ request.interceptors.response.use(async (response) => {
   try {
     const res = await response.clone().json();
     const { code } = res;
-    if (code !== 1) {
-      return Promise.reject(res);
-      // 在处理结果时判断res是否有值即可
-    } else {
-      return res;
+    switch(code) {
+      case 1:
+        return res;
+      case 2:
+        return Promise.reject(res);
+      default:
+        return Promise.reject({response});
     }
   } catch (error) {
     return Promise.reject(error);

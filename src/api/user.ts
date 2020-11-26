@@ -1,5 +1,8 @@
 import { get, post, del, put } from '@/utils/request'
 
-export const getAll = () => {
-  return get('/user')
+export default {
+  // 查询用户
+  query: (name?: string) => {
+    return get('/user', { name })
+  }
 }

@@ -1,25 +1,38 @@
-import React from 'react';
-import { history } from 'umi';
+import React, { FC } from 'react';
+import { AminModelState, connect, ConnectProps, history } from 'umi';
 import { Form, Input, Button } from 'antd';
 import { validateMessages } from '@/components/FileOperate/props';
 import { LockOutlined } from '@ant-design/icons';
 import styles from './login.module.less';
-import { adminLogin } from '@/api/login';
+import api from '@/api/login';
+interface IProps extends ConnectProps {
+  admin: AminModelState;
+}
 
-
-export default function() {
-
+const IndexPage:FC<IProps> = ({ dispatch }) => {
+  const [ form ] = Form.useForm();
   function onFinish(values: any) {
-    console.log(values);
-    adminLogin(values.password).then(() => {
+    api.adminLogin(values.password).then(() => {
+      dispatch && dispatch({
+        type: 'admin/update',
+        payload: {
+          update: new Date(),
+          name: '管理员'
+        }
+      })
       localStorage.setItem('topNavActive', '');
       history.push('/admin/user');
+    }).catch(() => {
+      // 清空密码
+      form.setFieldsValue({
+        password: ''
+      })
     })
   }
 
   return (
     <div className={ styles.login }>
-      <Form validateMessages={ validateMessages } className={ styles.loginForm } onFinish={ onFinish }>
+      <Form form={ form } validateMessages={ validateMessages } className={ styles.loginForm } onFinish={ onFinish }>
         <Form.Item
           name="password"
           label="密码"
@@ -40,3 +53,4 @@ export default function() {
     </div>
   );
 }
+export default connect()(IndexPage);

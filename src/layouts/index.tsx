@@ -30,7 +30,7 @@ export default function(props: IRouteComponentProps) {
   return (
     <Layout>
       <Header>
-        <Head nav={ nav } />
+        <Head nav={ nav } type="user" />
       </Header>
       <Layout>{props.children}</Layout>
     </Layout>

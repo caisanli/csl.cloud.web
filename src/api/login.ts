@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { del, post } from '@/utils/request';
 
 /**
  * 管理员登录
@@ -15,4 +15,25 @@ export const adminLogin = (password: string) => {
  */
 export const login = (name: string, password: string) => {
   return post('/login', { name, password });
+}
+
+/**
+ * 管理员退出
+ */
+export const adminLogout = () => {
+  return del('/login/admin/out')
+}
+
+/**
+ * 用户退出
+ */
+export const logout = () => {
+  return del('login/out')
+}
+
+export default {
+  adminLogin,
+  login,
+  adminLogout,
+  logout
 }

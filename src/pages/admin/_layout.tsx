@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout } from 'antd';
-import { Head } from '@/components/Layouts';
+import { Head, Main } from '@/components/Layouts';
 import { IRouteComponentProps } from 'umi';
 import { INavItem } from '@/types';
 import Login from './login';
@@ -25,10 +25,15 @@ export default (props: IRouteComponentProps) => {
   return (
     <Layout>
       <Header>
-        <Head nav={ nav } />
+        <Head nav={ nav } type="admin" />
       </Header>
-      <Content>
-        {props.children}
+      <Content style={{
+          paddingLeft: '50px',
+          paddingRight: '50px'
+        }}>
+        <Main>
+          { props.children }
+        </Main>
       </Content>
     </Layout>
   )
