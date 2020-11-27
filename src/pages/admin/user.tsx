@@ -1,5 +1,6 @@
 import React from 'react';
-import { Row, Col, Input, Button, Table } from 'antd';
+import { Table } from 'antd';
+import { Row, Col, Input, Button, message as Message } from '@/utils/_ant';
 import Modal from '@/components/Modal';
 import Form, { IFieldProps } from '@/components/Form';
 import { UserAddOutlined, EditOutlined } from '@ant-design/icons';
@@ -11,7 +12,6 @@ type IState = {
   users: IUser[];
   loading: boolean;
   createUpdateVisible: boolean;
-  type: 'create' | 'update';
 };
 export default class User extends React.Component<null, IState> {
   constructor(props: any) {
@@ -19,13 +19,18 @@ export default class User extends React.Component<null, IState> {
     this.state = {
       users: [],
       loading: false,
-      createUpdateVisible: false,
-      type: 'create',
+      createUpdateVisible: false
     };
+    this.type = 'create';
     this.onOk = this.onOk.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onCreateUser = this.onCreateUser.bind(this);
   }
+  // 操作类型
+  type: 'create' | 'update';
+
+  // 操作用户的ID
+  userId?: string;
 
   // 表格列数据
   columns = [
@@ -47,9 +52,9 @@ export default class User extends React.Component<null, IState> {
       title: '操作',
       dataIndex: 'action',
       width: '200px',
-      render: () => (
+      render: (text: any, row: IUser) => (
         <>
-          <Button size="small" icon={<EditOutlined />}></Button>
+          <Button onClick={ () => this.onUpdate(row) } size="small" icon={<EditOutlined />} />
         </>
       ),
     },
@@ -90,8 +95,12 @@ export default class User extends React.Component<null, IState> {
   // 表单
   form?: IFormInstance<any> | null;
 
+  // 搜索名称
+  searchName?: string;
+
   // 查找人员
   async query(name?: string) {
+    this.searchName = name;
     this.setState({
       loading: true,
     });
@@ -101,19 +110,41 @@ export default class User extends React.Component<null, IState> {
       loading: false,
     });
   }
-
-  // 开始创建用户
-  onCreateUser() {
-    console.log(this.form);
+  // 开始更新用户
+  onUpdate(row: IUser) {
+    this.type = 'update';
+    this.userId = row.id;
     this.setState({
-      type: 'create',
+      createUpdateVisible: true
+    }, () => {
+      this.form?.setFieldsValue(row);
+    })
+  }
+  // 开始添加用户
+  onCreateUser() {
+    this.type = 'create';
+    this.setState({
       createUpdateVisible: true,
     });
     if (this.form) this.form.resetFields();
   }
 
   // 模态框提交
-  onOk() {}
+  onOk() {
+    this.form?.validateFields().then( async ({ name, phone, email }) => {
+      if(this.type === 'create') {
+        await api.create(name, phone, email);
+        Message.success('添加成功');
+      } else if(this.userId) {
+        await api.update(this.userId, name, phone, email);
+        Message.success('更新成功');
+      }
+      this.setState({
+        createUpdateVisible: false
+      })
+      this.query(this.searchName)
+    })
+  }
 
   // 模态框取消
   onCancel() {
@@ -134,7 +165,7 @@ export default class User extends React.Component<null, IState> {
           <Col>当前有{users.length}个用户</Col>
           <Col>
             <Button onClick={this.onCreateUser} icon={<UserAddOutlined />}>
-              创建用户
+              添加用户
             </Button>
             <Input.Search
               style={{ width: '200px', marginLeft: '10px' }}
@@ -154,7 +185,7 @@ export default class User extends React.Component<null, IState> {
           rowKey="id"
         />
 
-        {/* 创建 / 编辑模态框 */}
+        {/* 添加 / 编辑模态框 */}
         <Modal
           title="用户"
           visible={createUpdateVisible}
@@ -164,26 +195,8 @@ export default class User extends React.Component<null, IState> {
           <Form
             fieldData={this.formField}
             ref={(form: IFormInstance) => (this.form = form)}
-            labelCol={{ span: 4 }}
             name="form"
-          >
-            {/* <Form.Item name="name" label="名称" rules={[
-              { required: true },
-              { type: 'string', max: 24, min: 2 }
-            ]}>
-              <Input placeholder="输入名称" />
-            </Form.Item>
-            <Form.Item name="phone" label="电话" rules={[
-              { pattern: /^$|^1[\d]{10}$/ }
-            ]}>
-              <Input type="tel" placeholder="输入电话" />
-            </Form.Item>
-            <Form.Item name="email" label="邮箱" rules={[
-              { type: 'email' }
-            ]}>
-              <Input type="email" placeholder="输入邮箱" />
-            </Form.Item> */}
-          </Form>
+          />
         </Modal>
       </>
     );
