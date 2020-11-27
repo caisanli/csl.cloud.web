@@ -1,20 +1,27 @@
 import React from 'react';
-import { Form, Input } from 'antd';
-import { IFormInstance } from '@/types/front';
+import { Form, Input, InputNumber } from 'antd';
 import { FormProps } from 'antd/lib/form/Form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { InputProps } from 'antd/lib/input/index';
 import { TextAreaProps } from 'antd/lib/input/TextArea';
-export interface IInputProps extends InputProps {
+import { InputNumberProps } from 'antd/lib/input-number/index';
+// import { InputNumber } from '@/utils/_ant';
+export interface IDefaultProps extends InputProps {
   customType?: 'default';
 }
 export interface ITextareaProps extends TextAreaProps {
   customType: 'textarea';
 }
 
+export interface INumberProps extends  InputNumberProps {
+  customType: 'number';
+}
+
+type IInputProps = IDefaultProps | ITextareaProps | INumberProps;
+
 export interface IFieldProps extends FormItemProps {
   key: string;
-  input: IInputProps | ITextareaProps;
+  input: IInputProps | (() => JSX.Element);
 }
 export interface IFormProps extends FormProps {
   fieldData: IFieldProps[];
@@ -69,11 +76,14 @@ const validateMessages = {
 };
 
 // 生成Input
-function createInput(input: IInputProps | ITextareaProps): JSX.Element {
+function createInput(input: IInputProps): JSX.Element {
   let CustomInput: any;
   if (input.customType === 'textarea') {
     let { customType, ...otherProps } = input;
     CustomInput = <Input.TextArea {...otherProps} />;
+  } else if(input.customType === 'number') {
+    let { customType, ...otherProps } = input;
+    CustomInput = <InputNumber {...otherProps} />;
   } else {
     let { customType, ...otherProps } = input;
     CustomInput = <Input {...otherProps} />;
@@ -84,12 +94,19 @@ function createInput(input: IInputProps | ITextareaProps): JSX.Element {
 const IndexPage = React.forwardRef((props: IFormProps, ref: any) => {
   let { fieldData, ...FormProps } = props;
   return (
-    <Form ref={ref} {...FormProps} validateMessages={validateMessages}>
+    <Form ref={ref} labelCol={{ span: 4 }} {...FormProps} validateMessages={validateMessages}>
       {fieldData.map(field => {
         let { key, input, ...otherProps } = field;
+        let Input: JSX.Element;
+        if(typeof input === 'function') {
+          Input = input();
+        } else {
+          Input = createInput(input);
+        }
+
         return (
           <Form.Item key={key} name={key} {...otherProps}>
-            {createInput(input)}
+            { Input }
           </Form.Item>
         );
       })}
