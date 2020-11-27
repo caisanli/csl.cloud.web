@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal } from 'antd';
 import { ModalProps } from 'antd/lib/modal/Modal'
 interface IProps extends ModalProps {
-  children: React.ReactChild;
+  children?: React.ReactChild | React.ReactChild[];
 }
 export default function(props: IProps) {
   let { children, okText, cancelText,  ...otherProps } = props;
