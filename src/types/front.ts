@@ -1,6 +1,8 @@
 import { IColumn } from '@/components/Table';
 import { ReactNode } from 'react';
+import { ColumnsType } from 'antd/lib/table/interface';
 import { FormInstance as IFormInstance } from 'rc-field-form/es/interface';
+
 /**
  * 导航栏
  */
@@ -64,4 +66,4 @@ interface IOperateProps {
   onCancel?: () => void
 }
 
-export { INavItem, IFileContainerProps, ITableIconProps, IContextMenu, IToolBar, IOperateProps, IFormInstance };
+export { INavItem, IFileContainerProps, ITableIconProps, IContextMenu, IToolBar, IOperateProps, IFormInstance, ColumnsType };
