@@ -1,14 +1,18 @@
 import React from 'react';
-import { Form, Input, InputNumber } from 'antd';
+import { Form, Input, InputNumber, Checkbox } from 'antd';
 import { FormProps } from 'antd/lib/form/Form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { InputProps } from 'antd/lib/input/index';
 import { TextAreaProps } from 'antd/lib/input/TextArea';
 import { InputNumberProps } from 'antd/lib/input-number/index';
+import { PasswordProps } from 'antd/lib/input/Password';
+import Button, { ButtonProps } from 'antd/lib/button/index';
+import { CheckboxProps, CheckboxGroupProps } from 'antd/lib/checkbox/index';
 // import { InputNumber } from '@/utils/_ant';
 export interface IDefaultProps extends InputProps {
   customType?: 'default';
 }
+
 export interface ITextareaProps extends TextAreaProps {
   customType: 'textarea';
 }
@@ -17,7 +21,25 @@ export interface INumberProps extends  InputNumberProps {
   customType: 'number';
 }
 
-type IInputProps = IDefaultProps | ITextareaProps | INumberProps;
+export interface IPasswordProps extends PasswordProps {
+  customType: 'password'
+}
+
+export interface IButtonProps extends ButtonProps {
+  label: string,
+  customType: 'button'
+}
+
+export interface ICheckbox extends CheckboxProps {
+  customType: 'checkbox',
+  label: string
+}
+
+export interface ICheckboxGroup extends CheckboxGroupProps {
+  customType: 'checkboxGroup'
+}
+
+type IInputProps = IDefaultProps | ITextareaProps | INumberProps | IPasswordProps | IButtonProps | ICheckboxGroup | ICheckbox;
 
 export interface IFieldProps extends FormItemProps {
   key: string;
@@ -84,6 +106,18 @@ function createInput(input: IInputProps): JSX.Element {
   } else if(input.customType === 'number') {
     let { customType, ...otherProps } = input;
     CustomInput = <InputNumber {...otherProps} />;
+  } else if(input.customType === 'password') {
+    let { customType, ...otherProps } = input;
+    CustomInput = <Input.Password {...otherProps} />;
+  } else if(input.customType === 'button') {
+    let { customType, label, ...otherProps } = input;
+  CustomInput = <Button {...otherProps}>{ label }</Button> ;
+  } else if(input.customType === 'checkbox') {
+    let { customType, label, ...otherProps } = input;
+  CustomInput = (<Checkbox {...otherProps}>{ label }</Checkbox>);
+  }else if(input.customType === 'checkboxGroup') {
+    let { customType, ...otherProps } = input;
+    CustomInput = <Checkbox.Group {...otherProps} />;
   } else {
     let { customType, ...otherProps } = input;
     CustomInput = <Input {...otherProps} />;
@@ -103,7 +137,6 @@ const IndexPage = React.forwardRef((props: IFormProps, ref: any) => {
         } else {
           Input = createInput(input);
         }
-
         return (
           <Form.Item key={key} name={key} {...otherProps}>
             { Input }
