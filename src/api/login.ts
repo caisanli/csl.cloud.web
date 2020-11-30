@@ -28,7 +28,7 @@ export const adminLogout = () => {
  * 用户退出
  */
 export const logout = () => {
-  return del('login/out')
+  return del('/login/out')
 }
 
 export default {
