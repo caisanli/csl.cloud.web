@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import FileContainer from '@/components/FileContainer';
 import { Folder, Rename } from '@/components/FileOperate';
 import {
@@ -116,33 +116,25 @@ export default function Index() {
       })
   }
 
-  function login() {
-    let body = JSON.stringify({
-      name: '测试125',
-      password: 'Aa123456!'
-    })
-    fetch('http://127.0.0.1:3000/apis/login', {
-      method: 'POST',
-      body,
-      headers: {
-        'content-type': 'application/json'
-      },
-      credentials: 'include'
-    }).then(res => {
-      return res.json();
-    }).then(res => {
-      console.log(res);
-    })
-  }
+  useEffect(function() {
+    console.log('quotes: ')
+  }, [false])
+
   return (
     <>
-      <FileContainer dataSource={data} type="person" canCreateFolder onCreateFolder={ onCreateFolder } tools={tools} contextMenu={contextMenu} />
+      <FileContainer
+        dataSource={data}
+        type="person"
+        canCreateFolder
+        onCreateFolder={ onCreateFolder }
+        tools={ tools }
+        contextMenu={ contextMenu }
+      />
       <Folder ref={ folderForm } visible={ folderVisible } onSubmit={ onSubmitCreateFolder } onCancel={ () => setFolderVisible(false) } />
       <Rename ref={ renameForm } visible={ renameVisible } />
       {/* <video controls src="http://127.0.0.1:3000/apis/file/preview/bc6b041e-2e39-11eb-9234-0123456789ab" /> */}
       <a target="_blank" href="http://127.0.0.1:3000/apis/file/download/838485ae-2e2e-11eb-9234-0123456789ab">下载</a>
       <input type="file" onChange={ fileChange } />
-      <button onClick={ login }>登录</button>
     </>
   );
 }
