@@ -21,6 +21,7 @@ const IndexPage:FC<IProps> = ({ dispatch }) => {
         }
       })
       localStorage.setItem('topNavActive', '');
+      localStorage.setItem('admin', JSON.stringify({ currentTime: Date.now(), name: '管理员' }));
       history.push('/admin/user');
     }).catch(() => {
       // 清空密码
