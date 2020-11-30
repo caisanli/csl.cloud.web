@@ -26,8 +26,9 @@ const IndexPage: FC<IProps> = (props) => {
     history.push(item.path);
   }
   // 名称
-  console.log('admin：', admin)
-  const name = type === 'admin' ? admin.name : user.info.name;
+  const name = type === 'admin'
+        ? JSON.parse(localStorage.getItem('admin') || '{}').name
+        : JSON.parse(localStorage.getItem('user') || '{}').name;
   // 下拉菜单
   const dropMenu = (
     <Menu onClick={ onClickDropdown }>
