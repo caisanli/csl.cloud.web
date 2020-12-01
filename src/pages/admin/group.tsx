@@ -1,10 +1,9 @@
 import React from 'react';
 import { ColumnsType, IFormInstance, IGroup, IUser } from '@/types';
-import { Button, Col, Input, message, Row, Table } from '@/utils/_ant';
+import { Button, Col, Input, message, Row, Table } from 'antd';
 import {
   UsergroupAddOutlined,
   EditOutlined,
-  DeleteOutlined,
 } from '@ant-design/icons';
 import api from '@/api/group';
 import Modal from '@/components/Modal';

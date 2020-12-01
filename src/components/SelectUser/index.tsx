@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
 import api from '@/api/user';
 import { ColumnsType, IUser } from '@/types';
-import { Col, Input, message, Row, Table } from '@/utils/_ant';
+import { Col, Input, message, Row, Table } from 'antd';
 
 type IProps = {
   checked?: string[];

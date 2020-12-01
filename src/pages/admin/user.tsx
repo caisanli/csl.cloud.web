@@ -1,6 +1,5 @@
 import React from 'react';
-import { Table } from 'antd';
-import { Row, Col, Input, Button, message as Message } from '@/utils/_ant';
+import { Row, Col, Input, Button, message as Message, Table } from 'antd';
 import Modal from '@/components/Modal';
 import Form, { IFieldProps } from '@/components/Form';
 import { UserAddOutlined, EditOutlined } from '@ant-design/icons';
