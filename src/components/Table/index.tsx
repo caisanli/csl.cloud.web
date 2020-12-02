@@ -5,8 +5,8 @@ import { Checkbox } from 'antd';
 import styles from './index.module.less';
 export interface IColumn {
   key: string; // 唯一值
-  label: string; // 表头名称
-  value: string; // 对应数据的key
+  label?: string; // 表头名称
+  value?: string; // 对应数据的key
   width?: string | number; // 列宽度
   render?: (data: any) => ReactElement;
   ellipsis?: boolean; // 是否显示省略号
@@ -124,7 +124,8 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 点击右键菜单
   onClickContextMenu(item: IContextMenu) {
-    if (typeof item.onClick === 'function') item.onClick(this.contextMenuData);
+    if (typeof item.onClick === 'function')
+      item.onClick(this.contextMenuData);
   }
   // 生成右键菜单
   createContextMenu() {
@@ -228,7 +229,7 @@ export default class Table extends React.Component<IProps, IState> {
                         col.ellipsis ? styles.ellipsis : '',
                       ].join(' ')}
                     >
-                      {col.render ? col.render(data) : data[col.value]}
+                      {col.render ? col.render(data) : data[col.value || '0']}
                     </div>
                   );
                 })}
