@@ -1,15 +1,14 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, FC } from 'react';
+import { FileModelState, ConnectProps, connect } from 'umi';
 import FileContainer from '@/components/FileContainer';
-import { Folder, Rename } from '@/components/FileOperate';
-import {
-  DownloadOutlined,
-  ShareAltOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  CopyOutlined,
-} from '@ant-design/icons';
-import { IContextMenu, IToolBar } from '@/types';
-
+import { Folder, Rename, delFolder } from '@/components/FileOperate';
+import { DownloadOutlined, ShareAltOutlined, DeleteOutlined, EditOutlined, CopyOutlined, ScissorOutlined } from '@ant-design/icons';
+import { IContextMenu, ICrumbItem, IToolBar } from '@/types';
+import fileApi from '@/api/file';
+import file from '../group/file';
+interface IProps extends ConnectProps {
+  file: FileModelState;
+}
 const tools: IToolBar[] = [
   {
     name: '下载',
@@ -45,96 +44,130 @@ const tools: IToolBar[] = [
   },
 ];
 
-const contextMenu: IContextMenu[] = [{
-  name: '',
-  value: '',
-  icon: null,
-  onClick() {
+const Index: FC<IProps> = function(props: IProps) {
 
-  }
-}]
+  // 文件夹菜单
+const folderRightMenu:IContextMenu[] = [
+  {
+    name: '更新',
+    value: 'update',
+    icon: <EditOutlined />,
+    onClick(data: any) {
+      setFId(data.id);
+      setFType('update');
+      setFceDate(Date.now());
+    }
+  }, {
+    name: '删除',
+    value: 'delete',
+    icon: <DeleteOutlined />,
+    onClick(data: any) {
+      delFolder(data.id, onSuccess)
+    }
+  }, {
+    name: '分享',
+    value: 'share',
+    icon: <ShareAltOutlined />,
+    onClick(data: any) {
 
-export default function Index() {
-  const data: any[] = [];
-  for (let i = 0; i < 300; i++) {
-    data.push({
-      id: i,
-      name: '文件 - ' + i,
-      size: '1.5M',
-      modifyDate: '2020/11/14 05:55:23',
-    });
+    }
   }
-  // 文件夹相关
-  const [folderVisible, setFolderVisible] = useState(false);
-  const folderForm = useRef();
+]
+// 文件右键菜单
+const fileRightMenu:IContextMenu[] = [
+  {
+    name: '重命名',
+    value: 'rename',
+    icon: <EditOutlined />,
+    onClick(data: any) {
+
+    }
+  }, {
+    name: '删除',
+    value: 'delete',
+    icon: <DeleteOutlined />,
+    onClick(data: any) {
+
+    }
+  }, {
+    name: '分享',
+    value: 'share',
+    icon: <ShareAltOutlined />,
+    onClick(data: any) {
+
+    }
+  }, {
+    name: '移动到',
+    value: 'move',
+    icon: <ScissorOutlined />,
+    onClick(data: any) {
+
+    }
+  }, {
+    name: '复制到',
+    value: 'copy',
+    icon: <CopyOutlined />,
+    onClick(data: any) {
+
+    }
+  }
+]
+// 自定义生成右键菜单
+const contextMenu = function(data: any): IContextMenu[] {
+  if(data.parentId)
+    return folderRightMenu;
+   else
+    return fileRightMenu;
+}
+
+  const [ crumbs, setCrumbs ] = useState<ICrumbItem[]>([]);
+  const [ list, setList ] = useState([]);
+  const { folder, sort: { order, type }  } = props.file;
+  async function query() {
+    const { data: { crumbs, files, folders, page } } = await fileApi.query(folder, type, order, 1, 10);
+    setCrumbs(crumbs);
+    setList(folders.concat(files))
+  }
+  // 文件夹
+  const [ fceDate, setFceDate ] = useState<number>();
+  const [ fId, setFId ] = useState<string>();
+  const [fType, setFType] = useState<'create' | 'update'>('create');
   function onCreateFolder() {
-    setFolderVisible(true);
-  }
-  function onSubmitCreateFolder(values: any) {
-    setFolderVisible(false);
-  }
-  // 重命名相关
-  const [renameVisible, setRenameVisible] = useState(false);
-  const renameForm = useRef();
-
-
-  const CHUNK_SIZE = 1024 * 1024 * 5;
-  function fileChange(e) {
-      const file = e.target.files[0];
-      const chunks = Math.ceil(file.size / CHUNK_SIZE);
-      upload(chunks, file)
+    setFType('create')
+    setFceDate(Date.now());
   }
 
-  function upload(total, file, index = 0) {
-      if(index >= total) {
-          alert('上传完成')
-          return ;
-      }
-      const formData = new FormData();
-      formData.append('name', file.name)
-      formData.append('size', file.size);
-      formData.append('chunks', total)
-      formData.append('chunk', (index + 1) + '');
-      formData.append('folder', '0');
-      formData.append('modifyDate', new Date(file.lastModifiedDate).getTime() + '')
-      let start = index * CHUNK_SIZE;
-      let end = CHUNK_SIZE * (index + 1);
-      end = end > file.size ? file.size : end;
-      console.log('end：' + end)
-      formData.append('file', file.slice(start, end))
-      fetch('http://127.0.0.1:3000/apis/file/upload', {
-          method: 'POST',
-          body: formData,
-          credentials: 'include'
-      }).then(res => {
-          return res.json();
-      }).then(res => {
-        if(res.code === 1)
-          upload(total, file, ++index)
-      }).catch(err => {
-          console.log(err)
-      })
+  // 操作完成的回调
+  function onSuccess() {
+    query();
   }
-
   useEffect(function() {
-    console.log('quotes: ')
-  }, [false])
+    query();
+  }, [])
 
   return (
     <>
       <FileContainer
-        dataSource={data}
+        dataSource={ list }
         type="person"
         canCreateFolder
+        crumbs={ crumbs }
         onCreateFolder={ onCreateFolder }
         tools={ tools }
         contextMenu={ contextMenu }
       />
-      <Folder ref={ folderForm } visible={ folderVisible } onSubmit={ onSubmitCreateFolder } onCancel={ () => setFolderVisible(false) } />
-      <Rename ref={ renameForm } visible={ renameVisible } />
-      {/* <video controls src="http://127.0.0.1:3000/apis/file/preview/bc6b041e-2e39-11eb-9234-0123456789ab" /> */}
-      <a target="_blank" href="http://127.0.0.1:3000/apis/file/download/838485ae-2e2e-11eb-9234-0123456789ab">下载</a>
-      <input type="file" onChange={ fileChange } />
+      <Folder
+        now={ fceDate }
+        id={ fId }
+        data={{ parentId: folder }}
+        type={ fType }
+        onSuccess = { onSuccess }
+      />
+      <Rename />
     </>
   );
 }
+const mapStateToProps = (state) => ({
+  file: state.file
+})
+export default connect(mapStateToProps)(Index);
