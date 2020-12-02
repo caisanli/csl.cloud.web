@@ -1,9 +1,11 @@
 import { Reducer } from 'umi';
+import { ORDER, SORT } from '@/types';
 export interface FileModelState {
+  folder: string;
   style: string;
   sort: {
-    type: string;
-    order: 'asc' | 'desc';
+    type: SORT;
+    order: ORDER;
   };
 }
 
@@ -13,16 +15,18 @@ export interface FileModelType {
   reducers: {
     setStyle: Reducer<FileModelState>;
     setSort: Reducer<FileModelState>;
+    setFolder: Reducer<FileModelState>
   };
 }
 
 const IndexModel: FileModelType = {
   namespace: 'file',
   state: {
+    folder: '0',
     style: 'table',
     sort: {
       type: 'name',
-      order: 'desc',
+      order: 'DESC',
     },
   },
   reducers: {
@@ -38,6 +42,12 @@ const IndexModel: FileModelType = {
         ...action.payload,
       };
     },
+    setFolder(state, action) {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    }
   },
 };
 
