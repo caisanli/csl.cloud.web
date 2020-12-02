@@ -13,19 +13,16 @@ interface INavItem {
   icon?: string;
   children?: INavItem[];
 }
-/**
- * 文件容器
- */
-interface IFileContainerProps {
-  dataSource: any[];
-  canCreateFolder?: boolean;
-  type: 'person' | 'group';
-  tools?: IToolBar[];
-  contextMenu?: IContextMenu[];
-  onCreateFolder?: () => void;
-  onSearch?: (name: string) => void;
-}
 
+
+/**
+ * 面包屑
+ */
+interface ICrumbItem {
+  name: string;
+  id: string;
+  parentId: string;
+}
 /**
  * 表格、图标列表
  */
@@ -33,8 +30,22 @@ interface ITableIconProps {
   dataSource: any[];
   scrollSelector?: string | Element;
   tools?: any[];
-  contextMenu?: IContextMenu[];
+  contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
   columns?: IColumn[];
+}
+
+/**
+ * 文件容器
+ */
+interface IFileContainerProps {
+  dataSource: any[];
+  crumbs?: ICrumbItem[];
+  canCreateFolder?: boolean;
+  type: 'person' | 'group';
+  tools?: IToolBar[];
+  contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
+  onCreateFolder?: () => void;
+  onSearch?: (name: string) => void;
 }
 
 /**
@@ -61,9 +72,24 @@ interface IToolBar {
  * 文件、文件夹操作接口
  */
 interface IOperateProps {
-  visible: boolean;
-  onSubmit?: (data: any) => void;
-  onCancel?: () => void
+  now?: number;
+  id?: string;
+  type?: 'update' | 'create';
+  data?: {
+    [key: string]: any;
+  };
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export { INavItem, IFileContainerProps, ITableIconProps, IContextMenu, IToolBar, IOperateProps, IFormInstance, ColumnsType };
+type Result = {
+  data: any;
+  code: number;
+  message: string;
+}
+
+type SORT = 'date' | 'size' | 'name';
+
+type ORDER = 'DESC' | 'ASC';
+
+export { INavItem, IFileContainerProps, ITableIconProps, IContextMenu, IToolBar, IOperateProps, IFormInstance, ColumnsType, SORT, ORDER, ICrumbItem, Result };
