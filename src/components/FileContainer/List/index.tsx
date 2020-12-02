@@ -6,11 +6,27 @@ import { IColumn } from '@/components/Table';
 import IconList from './icon';
 import TableList from './table';
 import styles from './index.module.less';
+import { bytesToSize, msToDate } from '@/utils';
+import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 interface IProps extends ITableIconProps {}
 interface IProps extends ConnectProps {
   file: FileModelState;
 }
+const iconStyle = {
+  fontSize: '18px',
+  verticalAlign: 'sub',
+  color: '#40a9ff'
+}
 const columns: IColumn[] = [
+  {
+    key: '00',
+    width: 40,
+    render(data: any) {
+      if(data.parentId)
+        return <FolderOutlined style={ iconStyle } />
+      return <FileOutlined style={ iconStyle } />;
+    }
+  },
   {
     key: '01',
     label: '文件名',
@@ -25,11 +41,25 @@ const columns: IColumn[] = [
     key: '02',
     label: '大小',
     value: 'size',
+    render(data: any) {
+      return (
+        <>
+          { bytesToSize(data.size) }
+        </>
+      );
+    }
   },
   {
     key: '03',
     label: '修改日期',
     value: 'modifyDate',
+    render(data: any) {
+      return (
+        <>
+          { msToDate(data.modifyDate) }
+        </>
+      )
+    }
   },
 ];
 

@@ -4,18 +4,6 @@ import Crumb from './crumb';
 import List from './List';
 import { IFileContainerProps } from '@/types';
 
-const crumbs = [
-  {
-    name: '全部文件',
-    id: 0,
-    pid: -1,
-  },
-  {
-    name: '文件夹1',
-    id: 1,
-    pid: 0,
-  },
-];
 export default function(props: IFileContainerProps) {
   return (
     <>
@@ -27,9 +15,9 @@ export default function(props: IFileContainerProps) {
         onSearch={props.onSearch}
       />
       {/* 面包屑 */}
-      <Crumb crumbs={crumbs} />
+      { props.crumbs && <Crumb crumbs={ props.crumbs } /> }
       {/* 列表 */}
-      <List dataSource={props.dataSource} />
+      <List dataSource={ props.dataSource } contextMenu={ props.contextMenu } />
     </>
   );
 }

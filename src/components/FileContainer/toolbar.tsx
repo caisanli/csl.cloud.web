@@ -48,7 +48,7 @@ const IndexPage: FC<IProps> = function(props) {
       dispatch('file/setSort', {
         sort: {
           ...file.sort,
-          order: file.sort.order === 'asc' ? 'desc' : 'asc',
+          order: file.sort.order === 'ASC' ? 'DESC' : 'ASC',
         },
       });
       return;
@@ -67,7 +67,7 @@ const IndexPage: FC<IProps> = function(props) {
     { name: '修改日期', value: 'modifyDate' },
   ];
   const SortIcon =
-    file.sort.order === 'asc' ? SortAscendingOutlined : SortDescendingOutlined;
+    file.sort.order === 'ASC' ? SortAscendingOutlined : SortDescendingOutlined;
   const sortMenu = (
     <Menu onClick={onClickSortMenu}>
       {sortMenus.map(item => (

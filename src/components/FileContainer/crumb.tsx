@@ -1,29 +1,38 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Divider } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
+import { ConnectProps, connect, FileModelState } from 'umi';
 import styles from './index.module.less';
+import { ICrumbItem } from '@/types';
 
-interface ICrumbItem {
-  name: string;
-  id: number;
-  pid: number;
-}
 interface IProps {
   crumbs: ICrumbItem[],
   fileCount?: number,
   folderCount?: number
 }
-
-function onClickCrumb(item: ICrumbItem) {
-
+interface IProps extends ConnectProps {
+  file: FileModelState
 }
 
-export default function (props: IProps) {
+const Index: FC<IProps> = function (props: IProps) {
+  function onClickCrumb(item: ICrumbItem) {
+    props.dispatch &&
+    props.dispatch({
+      type: 'file/setFolder',
+      payload: {
+        ...props.file,
+        folder: item.parentId
+      }
+    })
+  }
   return (
     <div className={styles.crumb}>
       <div className={styles.crumbLeft}>
-        {props.crumbs.length ? (<div className={styles.crumbItem}><span className={ styles.crumbItemName }>返回上一级</span><Divider type="vertical" /></div>) : <span>全部文件</span>}
-
+        {
+          props.crumbs.length > 1
+            ? (<div className={styles.crumbItem}><span className={ styles.crumbItemName }>返回上一级</span><Divider type="vertical" /></div>)
+            : (<div className={ styles.crumbItem }><span className={ styles.crumbItemName }>全部文件</span><Divider type="vertical" /></div>)
+        }
         {
           props.crumbs.map(
             item => (
@@ -41,3 +50,8 @@ export default function (props: IProps) {
     </div>
   )
 }
+const mapStateToProps = state => ({
+  file: state.file
+})
+
+export default connect(mapStateToProps)(Index);
