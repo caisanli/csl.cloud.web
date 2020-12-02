@@ -1,6 +1,6 @@
+import { ORDER, SORT } from '@/types';
 import { get, post, del, put } from '@/utils/request';
-type SORT = 'date' | 'size' | 'name';
-type ORDER = 'DESC' | 'ASC'
+
 export default {
   /**
    * 查询用户文件
