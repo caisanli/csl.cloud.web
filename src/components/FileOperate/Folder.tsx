@@ -1,35 +1,89 @@
-import React from 'react';
-import { Form, Modal, Input } from 'antd';
-import { IOperateProps } from '@/types';
-import { formLayout, validateMessages, modalProps } from './props';
-const Folder = function(props: IOperateProps, ref) {
-  const [ form ] = Form.useForm();
+import React, { useEffect, useState } from 'react';
+import Form, { IFieldProps } from '@/components/Form';
+import Modal from '@/components/Modal';
+import { message } from 'antd';
+import { IFormInstance, IOperateProps } from '@/types';
+import api from '@/api/folder';
 
-  function onSubmit() {
-    form.validateFields().then(props.onSubmit)
+const fieldData: IFieldProps[] = [{
+  key: 'name',
+  label: '名称',
+  rules: [
+    { required: true },
+    { type: 'string', max: 24, min: 2 }
+  ],
+  input: {
+    placeholder: '输入名称'
   }
+}, {
+  key: 'description',
+  label: '描述',
+  rules: [
+    { type: 'string', max: 150 }
+  ],
+  input: {
+    customType: 'textarea',
+    placeholder: '输入描述'
+  }
+}]
+let form: IFormInstance | null;
+const Folder = function(props: IOperateProps, ref) {
+  const [mVisible, setVisible] = useState<boolean>(false);
+  const { type, now, data, id, onSuccess } = props;
+  useEffect(function() {
+    if(!now) return ;
+    if(type === 'create') {
+      form && form.resetFields();
+      setVisible(true);
+    } else if(type === 'update' && id) {
+      api.getById(id).then(res => {
+        setVisible(true);
+        setTimeout(() => {
+          form && form.setFieldsValue(
+            res.data
+          )
+        }, 0)
+      })
+    }
+    return function() {
+      console.log('开始销毁...')
+      form = null;
+    }
+  }, [props.now])
 
+  // 开始提交
+  function onSubmit() {
+    form && form.validateFields().then( async (values: any) => {
+      let { name, description } = values;
+      if(type === 'create') {
+        await api.create(data?.parentId, name, description)
+        message.success('创建成功');
+      } else if(id) {
+        await api.update(id, name, description);
+        message.success('更新成功');
+      }
+      setVisible(false);
+      onSuccess && onSuccess();
+    })
+  }
+  // 关闭
+  function onCancel() {
+    setVisible(false);
+  }
+  function onRef(formIns: IFormInstance) {
+    form = formIns;
+  }
   return (
     <Modal
           title="文件夹"
-          visible={ props.visible }
+          visible={ mVisible }
           onOk={ onSubmit }
-          onCancel={ props.onCancel }
-          { ...modalProps }
+          onCancel={ onCancel }
         >
-          <Form ref={ ref } form={ form } {...formLayout} validateMessages={ validateMessages }>
-            <Form.Item label="名称" name="name" rules={[
-              { required: true },
-              { type: 'string', min: 1, max: 24 }
-            ]}>
-              <Input placeholder="请输入名称" />
-            </Form.Item>
-            <Form.Item label="描述" name="describe" rules={[
-              { type: 'string', min: 0, max: 255 }
-            ]}>
-              <Input.TextArea placeholder="请输入描述" />
-            </Form.Item>
-          </Form>
+          <Form
+            ref = { onRef }
+            fieldData = { fieldData }
+          />
       </Modal>
   )
 }
