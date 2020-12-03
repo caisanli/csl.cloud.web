@@ -36,7 +36,6 @@ export default function(props: IOperateProps) {
     if (!now) return;
     setVisible(true);
     setTimeout(() => {
-      console.log(form);
       if (data && form.current) {
         form.current.setFieldsValue({
           name: data.name,
