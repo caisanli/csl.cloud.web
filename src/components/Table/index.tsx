@@ -10,6 +10,8 @@ export interface IColumn {
   width?: string | number; // 列宽度
   render?: (data: any) => ReactElement;
   ellipsis?: boolean; // 是否显示省略号
+  link?: boolean; // 链接样式
+  onClickLink?: (data: any) => void; // 点击链接
   [key: string]: any;
 }
 
@@ -62,20 +64,20 @@ export default class Table extends React.Component<IProps, IState> {
       checked = this.props.dataSource;
     }
     this.checkAll = !this.checkAll;
-    this.setState({
-      checked,
-    }, () => {
-      this.props.onSelect
-      && this.props.onSelect(checked);
-    });
+    this.setState(
+      {
+        checked,
+      },
+      () => {
+        this.props.onSelect && this.props.onSelect(checked);
+      },
+    );
   }
   // 监听框选
   onSelect(selected: any[]) {
     let checked: any[] = [];
     selected.forEach(sel => {
-      checked.push(
-        this.props.dataSource[sel.index]
-      );
+      checked.push(this.props.dataSource[sel.index]);
     });
     this.setState({
       checked,
@@ -83,8 +85,7 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 监听框选完毕
   onSelectEnd() {
-    this.props.onSelect &&
-    this.props.onSelect(this.state.checked);
+    this.props.onSelect && this.props.onSelect(this.state.checked);
   }
   // 监听点击body
   onClickBody() {
@@ -100,12 +101,14 @@ export default class Table extends React.Component<IProps, IState> {
     } else {
       checked.push(data);
     }
-    this.setState({
-      checked
-    }, () => {
-      this.props.onSelect
-      && this.props.onSelect(checked);
-    });
+    this.setState(
+      {
+        checked,
+      },
+      () => {
+        this.props.onSelect && this.props.onSelect(checked);
+      },
+    );
   }
   // 右键菜单
   onContextMenu(data: any, e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -139,8 +142,7 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 点击右键菜单
   onClickContextMenu(item: IContextMenu) {
-    if (typeof item.onClick === 'function')
-      item.onClick(this.contextMenuData);
+    if (typeof item.onClick === 'function') item.onClick(this.contextMenuData);
   }
   // 生成右键菜单
   createContextMenu() {
@@ -150,16 +152,14 @@ export default class Table extends React.Component<IProps, IState> {
     let child;
     let createMenu = (menu: IContextMenu[]) => (
       <ul>
-        {
-          menu.map((item: IContextMenu) => {
-            return (
-              <li onClick={() => this.onClickContextMenu(item)} key={item.value}>
-                <span className={styles.menuIcon}>{item.icon}</span>
-                {item.name}
-              </li>
-            );
-          })
-        }
+        {menu.map((item: IContextMenu) => {
+          return (
+            <li onClick={() => this.onClickContextMenu(item)} key={item.value}>
+              <span className={styles.menuIcon}>{item.icon}</span>
+              {item.name}
+            </li>
+          );
+        })}
       </ul>
     );
     if (contextMenus instanceof Array) {
@@ -188,19 +188,19 @@ export default class Table extends React.Component<IProps, IState> {
     return (
       <div className={styles.thead}>
         <div className={styles.tr}>
-          {
-            this.props.select ? (
-              <div className={[styles.th, styles.select].join(' ')}>
-                <Checkbox
-                  onClick={this.onClickCheckAllBtn}
-                  indeterminate={
-                    !!checked.length && checked.length < dataSource.length
-                  }
-                  checked={ !!(dataSource.length && (dataSource.length === checked.length)) }
-                />
-              </div>
-            ) : null
-          }
+          {this.props.select ? (
+            <div className={[styles.th, styles.select].join(' ')}>
+              <Checkbox
+                onClick={this.onClickCheckAllBtn}
+                indeterminate={
+                  !!checked.length && checked.length < dataSource.length
+                }
+                checked={
+                  !!(dataSource.length && dataSource.length === checked.length)
+                }
+              />
+            </div>
+          ) : null}
           {columns &&
             columns.map(col => {
               return (
@@ -222,28 +222,25 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 生成body
   createBody() {
-    const { columns } = this.props;
+    const { columns, dataIndex, select, dataSource } = this.props;
     return (
       <div className={styles.tbody}>
-        {
-          this.props.dataSource.length
-          ? this.props.dataSource.map(data => {
-            return (
-              <div
-                key={data[this.props.dataIndex]}
-                className={styles.tr}
-                onClick={() => this.onClickColumn(data)}
-                onContextMenu={e => this.onContextMenu(data, e)}
-              >
-                {
-                  this.props.select ? (
+        {dataSource.length
+          ? dataSource.map(data => {
+              return (
+                <div
+                  key={data[dataIndex]}
+                  className={styles.tr}
+                  onClick={() => this.onClickColumn(data)}
+                  onContextMenu={e => this.onContextMenu(data, e)}
+                >
+                  {select ? (
                     <div className={[styles.td, styles.select].join(' ')}>
                       <Checkbox checked={this.isChecked(data)} />
                     </div>
-                  ) : null
-                }
-                {
-                  columns && columns.map(col => {
+                  ) : null}
+                  {columns &&
+                    columns.map(col => {
                       return (
                         <div
                           key={col.key}
@@ -252,16 +249,27 @@ export default class Table extends React.Component<IProps, IState> {
                             col.ellipsis ? styles.ellipsis : '',
                           ].join(' ')}
                         >
-                          {col.render ? col.render(data) : data[col.value || '0']}
+                          {col.render ? (
+                            col.render(data)
+                          ) : col.link ? (
+                            <span
+                              className={styles.link}
+                              onClick={() =>
+                                col.onClickLink && col.onClickLink(data)
+                              }
+                            >
+                              {data[col.value || '0']}
+                            </span>
+                          ) : (
+                            data[col.value || '0']
+                          )}
                         </div>
                       );
-                    })
-                  }
-              </div>
-            );
-          })
-          : null
-        }
+                    })}
+                </div>
+              );
+            })
+          : null}
       </div>
     );
   }
@@ -306,22 +314,22 @@ export default class Table extends React.Component<IProps, IState> {
     if (this.props.selecting) {
       return (
         <Selecting
-          scrollSelector={ this.props.scrollSelector || '' }
+          scrollSelector={this.props.scrollSelector || ''}
           selector={`.${styles.tbody} .${styles.tr}`}
-          onSelect={ this.onSelect }
-          onEnd={ this.onSelectEnd }
+          onSelect={this.onSelect}
+          onEnd={this.onSelectEnd}
         >
-          { this.createTable() }
-          { this.createContextMenu() }
-          { !this.props.dataSource.length && this.createEmpty() }
+          {this.createTable()}
+          {this.createContextMenu()}
+          {!this.props.dataSource.length && this.createEmpty()}
         </Selecting>
       );
     }
     return (
       <>
-        { this.createTable() }
-        { this.createContextMenu() }
-        { !this.props.dataSource.length && this.createEmpty() }
+        {this.createTable()}
+        {this.createContextMenu()}
+        {!this.props.dataSource.length && this.createEmpty()}
       </>
     );
   }
