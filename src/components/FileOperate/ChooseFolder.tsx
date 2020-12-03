@@ -1,10 +1,13 @@
-import React from 'react';
-import { Breadcrumb, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Breadcrumb } from 'antd';
 import Table, { IColumn } from '@/components/Table';
-import { modalProps } from './props';
+import Modal from '@/components/Modal';
+import api from '@/api/folder';
+import { ICrumbItem, IFolder } from '@/types';
 interface IProps {
   title?: string;
   visible: boolean;
+  folder?: string;
   data?: any[];
   crumbs?: any[];
   onCrumbs?: (data: any) => void;
@@ -22,23 +25,45 @@ const columns: IColumn[] = [
   },
 ];
 export default function(props: IProps) {
+  const { visible, title } = props;
+  const [folder, setFolder] = useState<string>(props.folder || '0');
+  const [list, setList] = useState<IFolder[]>([]);
+  const [crumbs, setCrumbs] = useState<ICrumbItem[]>([]);
+  useEffect(() => {
+    if(!visible) return ;
+    query();
+  }, [props.visible]);
+
+  async function query() {
+    const { data: { folders, crumbs } } = await api.getChildren(folder);
+    setList(folders);
+    setCrumbs(crumbs);
+  }
+  function onClickCrumb(item: ICrumbItem) {
+    setFolder(item.id);
+  }
   return (
     <Modal
-      title={props.title || '选择文件夹'}
-      visible={props.visible}
-      {...modalProps}
+      title={ title || '选择文件夹' }
+      visible={ visible }
     >
       <Breadcrumb>
-        {props.crumbs &&
-          props.crumbs.map(item => (
+        {
+          crumbs.map(item => (
             <Breadcrumb.Item
-              key={item.id}
-              onClick={() => props.onCrumbs && props.onCrumbs(item)}
+              key={ item.id }
+              onClick={ () => onClickCrumb(item) }
             >
-              {item.name}
+              { item.name }
             </Breadcrumb.Item>
-          ))}
+          ))
+        }
       </Breadcrumb>
+      <Table
+        dataSource={ list }
+        dataIndex='id'
+        columns={ columns }
+      />
     </Modal>
   );
 }
