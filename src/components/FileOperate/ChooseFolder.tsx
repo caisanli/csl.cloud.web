@@ -4,6 +4,7 @@ import Table, { IColumn } from '@/components/Table';
 import Modal from '@/components/Modal';
 import api from '@/api/folder';
 import { ICrumbItem, IFolder } from '@/types';
+import { FolderOutlined } from '@ant-design/icons';
 interface IProps {
   title?: string;
   visible: boolean;
@@ -12,30 +13,40 @@ interface IProps {
   crumbs?: any[];
   onCrumbs?: (data: any) => void;
 }
-const columns: IColumn[] = [
-  {
-    key: 'icon',
-    label: '',
-    value: '',
-  },
-  {
-    key: 'name',
-    label: '名称',
-    value: 'name',
-  },
-];
+
 export default function(props: IProps) {
   const { visible, title } = props;
   const [folder, setFolder] = useState<string>(props.folder || '0');
   const [list, setList] = useState<IFolder[]>([]);
   const [crumbs, setCrumbs] = useState<ICrumbItem[]>([]);
+  //
+  const columns: IColumn[] = [
+    {
+      key: 'icon',
+      width: '35px',
+      render() {
+        return <FolderOutlined style={{ fontSize: '18px' }} />;
+      },
+    },
+    {
+      key: 'name',
+      label: '名称',
+      value: 'name',
+      link: true,
+      onClickLink(data: any) {
+        setFolder(data.id);
+      },
+    },
+  ];
   useEffect(() => {
-    if(!visible) return ;
+    if (!visible) return;
     query();
-  }, [props.visible]);
+  }, [props.visible, folder]);
 
   async function query() {
-    const { data: { folders, crumbs } } = await api.getChildren(folder);
+    const {
+      data: { folders, crumbs },
+    } = await api.getChildren(folder);
     setList(folders);
     setCrumbs(crumbs);
   }
@@ -43,27 +54,15 @@ export default function(props: IProps) {
     setFolder(item.id);
   }
   return (
-    <Modal
-      title={ title || '选择文件夹' }
-      visible={ visible }
-    >
+    <Modal title={title || '选择文件夹'} visible={visible}>
       <Breadcrumb>
-        {
-          crumbs.map(item => (
-            <Breadcrumb.Item
-              key={ item.id }
-              onClick={ () => onClickCrumb(item) }
-            >
-              { item.name }
-            </Breadcrumb.Item>
-          ))
-        }
+        {crumbs.map(item => (
+          <Breadcrumb.Item key={item.id} onClick={() => onClickCrumb(item)}>
+            {item.name}
+          </Breadcrumb.Item>
+        ))}
       </Breadcrumb>
-      <Table
-        dataSource={ list }
-        dataIndex='id'
-        columns={ columns }
-      />
+      <Table dataSource={list} dataIndex="id" columns={columns} />
     </Modal>
   );
 }
