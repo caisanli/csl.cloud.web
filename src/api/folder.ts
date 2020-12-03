@@ -37,5 +37,13 @@ export default {
    */
   remove(id: string): Promise<Result> {
     return del('/folder/' + id);
+  },
+  /**
+   * 获取子文件夹包括面包屑
+   * @param {string} id
+   * @returns {Promise<Result>}
+   */
+  getChildren(id: string): Promise<Result> {
+    return get('/folder/' + id + '/children')
   }
 }
