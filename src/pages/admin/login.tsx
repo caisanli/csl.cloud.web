@@ -1,16 +1,32 @@
-import React, { FC } from 'react';
+import React, { FC, useRef } from 'react';
+import Form, { IFieldProps } from '@/components/Form';
 import { AminModelState, connect, ConnectProps, history } from 'umi';
-import { Form, Input, Button } from 'antd';
-import { validateMessages } from '@/components/FileOperate/props';
 import { LockOutlined } from '@ant-design/icons';
 import styles from './login.module.less';
 import api from '@/api/login';
+import { IFormInstance } from '@/types';
 interface IProps extends ConnectProps {
   admin: AminModelState;
 }
-
+const fieldData: IFieldProps[] = [{
+  key: 'password',
+  required: true,
+  input: {
+    customType: 'password',
+    prefix: <LockOutlined />,
+    placeholder: '输入密码'
+  }
+}, {
+  key: 'submit',
+  input: {
+    type: 'primary',
+    label: '登录',
+    customType: 'button',
+    htmlType: 'submit'
+  }
+}]
 const IndexPage:FC<IProps> = ({ dispatch }) => {
-  const [ form ] = Form.useForm();
+  const form = useRef<IFormInstance>();
   function onFinish(values: any) {
     api.adminLogin(values.password).then(() => {
       dispatch && dispatch({
@@ -25,7 +41,7 @@ const IndexPage:FC<IProps> = ({ dispatch }) => {
       history.push('/admin/user');
     }).catch(() => {
       // 清空密码
-      form.setFieldsValue({
+      form.current && form.current.setFieldsValue({
         password: ''
       })
     })
@@ -33,24 +49,12 @@ const IndexPage:FC<IProps> = ({ dispatch }) => {
 
   return (
     <div className={ styles.login }>
-      <Form form={ form } validateMessages={ validateMessages } className={ styles.loginForm } onFinish={ onFinish }>
-        <Form.Item
-          name="password"
-          label="密码"
-          rules={[
-            { required: true },
-            { type: 'string', min: 6, max: 24 }
-          ]}
-        >
-          <Input.Password
-            placeholder="请输入管理员密码"
-            prefix={<LockOutlined className="site-form-item-icon" />}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">登录</Button>
-        </Form.Item>
-      </Form>
+      <Form
+        fieldData={ fieldData }
+        ref={ form }
+        className={ styles.loginForm }
+        onFinish={ onFinish }
+      />
     </div>
   );
 }
