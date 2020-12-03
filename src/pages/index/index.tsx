@@ -8,48 +8,21 @@ import {
   DeleteOutlined,
   EditOutlined,
   CopyOutlined,
-  ScissorOutlined,
+  ScissorOutlined
 } from '@ant-design/icons';
 import { IContextMenu, ICrumbItem, IToolBar } from '@/types';
 import fileApi from '@/api/file';
-import file from '../group/file';
+import Move from '@/components/FileOperate/Move';
+import { copyBtn, delBtn, downBtn, moveBtn, renameBtn, shareBtn } from '@/components/FileContainer/tools';
+
 interface IProps extends ConnectProps {
   file: FileModelState;
 }
-const tools: IToolBar[] = [
-  {
-    name: '下载',
-    type: 'download',
-    icon: <DownloadOutlined />,
-    onClick() {},
-  },
-  {
-    name: '分享',
-    type: 'share',
-    icon: <ShareAltOutlined />,
-  },
-  {
-    name: '删除',
-    type: 'delete',
-    icon: <DeleteOutlined />,
-  },
-  {
-    name: '重命名',
-    type: 'rename',
-    icon: <EditOutlined />,
-  },
-  {
-    name: '复制',
-    type: 'copy',
-    icon: <CopyOutlined />,
-  },
-  {
-    name: '移动到',
-    type: 'move',
-  },
-];
 
-const Index: FC<IProps> = function(props: IProps) {
+const tools: IToolBar[] = []
+
+const Index: FC<IProps> = function (props: IProps) {
+
   // 文件夹菜单
   const folderRightMenu: IContextMenu[] = [
     {
@@ -74,7 +47,7 @@ const Index: FC<IProps> = function(props: IProps) {
       name: '分享',
       value: 'share',
       icon: <ShareAltOutlined />,
-      onClick(data: any) {},
+      onClick(data: any) { },
     },
   ];
   // 文件右键菜单
@@ -93,29 +66,30 @@ const Index: FC<IProps> = function(props: IProps) {
       name: '删除',
       value: 'delete',
       icon: <DeleteOutlined />,
-      onClick(data: any) {},
+      onClick(data: any) { },
     },
     {
       name: '分享',
       value: 'share',
       icon: <ShareAltOutlined />,
-      onClick(data: any) {},
+      onClick(data: any) { },
     },
     {
       name: '移动到',
       value: 'move',
       icon: <ScissorOutlined />,
-      onClick(data: any) {},
+      onClick(data: any) { },
     },
     {
       name: '复制到',
       value: 'copy',
       icon: <CopyOutlined />,
-      onClick(data: any) {},
+      onClick(data: any) { },
     },
   ];
+
   // 自定义生成右键菜单
-  const contextMenu = function(data: any): IContextMenu[] {
+  const contextMenu = function (data: any): IContextMenu[] {
     if (data.parentId) return folderRightMenu;
     else return fileRightMenu;
   };
@@ -145,13 +119,78 @@ const Index: FC<IProps> = function(props: IProps) {
   const [renameDate, setRenameDate] = useState<number>();
   const [fileId, setFileId] = useState<string>();
   const [fileName, setFileName] = useState<string>();
+  const [ moveDate, setMoveDate ] = useState<number>();
+  const [ moveIds, setMoveIds ] = useState<string>();
+  const [selected, setSelected] = useState<any[]>([]);
   // 操作完成的回调
   function onSuccess() {
     query();
   }
-  useEffect(function() {
+
+  // 点击项
+  function onClickColumn(data: any) {
+    if (data.parentId) { // 点击了文件夹
+      props.dispatch && props.dispatch({
+        type: 'file/setFolder',
+        payload: {
+          ...props.file,
+          folder: data.id
+        }
+      })
+    } else { // 点击了文件
+
+    }
+  }
+
+  // 工具栏
+  const [tools, setTools] = useState<IToolBar[]>([]);
+  // 监听选中
+  function onSelect(data: any[]) {
+    let type: number = 0;
+
+    for(let i = 0; i < data.length; i++ ) {
+      const d = data[i];
+      if(type === 3) break ;
+      if(d.parentId) { // 文件夹
+        type = type === 1 ? 3 : 2;
+      } else { // 文件
+        type = type === 2 ? 3 : 1;
+      }
+    }
+    setSelected(data);
+    let tools:IToolBar[] = [];
+    switch(type) {
+      case 1 :
+        tools = [shareBtn, downBtn, delBtn, renameBtn, copyBtn, moveBtn];
+        break;
+      case 2:
+        tools = [shareBtn, delBtn, renameBtn];
+        break;
+      case 3:
+        tools = [shareBtn];
+        break;
+    }
+    setTools(tools);
+  }
+  // 点击工具栏
+  function onClickTool(tool: IToolBar) {
+    switch(tool.type) {
+      case 'move':
+        move();
+        break;
+    }
+  }
+  function move() {
+    let ids: string[] = [];
+    selected.forEach(d => {
+      ids.push(d.id);
+    })
+    setMoveIds(ids.join(','));
+    setMoveDate(Date.now());
+  }
+  useEffect(function () {
     query();
-  }, []);
+  }, [props.file]);
 
   return (
     <>
@@ -163,6 +202,9 @@ const Index: FC<IProps> = function(props: IProps) {
         onCreateFolder={onCreateFolder}
         tools={tools}
         contextMenu={contextMenu}
+        onClickColumn={onClickColumn}
+        onSelect={onSelect}
+        onClickTool={ onClickTool }
       />
       <Folder
         now={fceDate}
@@ -175,6 +217,11 @@ const Index: FC<IProps> = function(props: IProps) {
         id={fileId}
         now={renameDate}
         data={{ name: fileName }}
+        onSuccess={onSuccess}
+      />
+      <Move
+        now={ moveDate }
+        data={{ ids: moveIds }}
         onSuccess={onSuccess}
       />
     </>
