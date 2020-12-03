@@ -46,6 +46,9 @@ interface IFileContainerProps {
   contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
   onCreateFolder?: () => void;
   onSearch?: (name: string) => void;
+  onClickColumn?: (data: any) => void;
+  onSelect?: (data: any[]) => void;
+  onClickTool?: (data: IToolBar) => void;
 }
 
 /**
