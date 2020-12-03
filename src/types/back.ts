@@ -14,3 +14,20 @@ export interface IGroup {
   size: number;
   user?: IUser
 }
+
+export interface IFolder {
+  id?: string;
+  name?: string;
+  description?: string;
+  parentId?: string;
+}
+
+export interface IFile {
+  id?: string;
+  name?: string;
+  folderId?: string;
+  modifyDate?: Date;
+  category?: string;
+  thumbnail?: string;
+  size?: number;
+}
