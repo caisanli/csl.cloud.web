@@ -33,14 +33,34 @@
         display: none;
       }
     }
-    &-name {
-      cursor: pointer;
-      color: @primary-color;
-      &:hover {
-        text-decoration: underline;
-        color: @link-hover-color;
+    &:not(:last-child) {
+      .crumb-item-name {
+        cursor: pointer;
+        color: @primary-color;
+        &:hover {
+          text-decoration: underline;
+          color: @link-hover-color;
+        }
       }
     }
   }
-
+}
+.list {
+  flex: 1;
+  overflow: hidden;
+  .table-name {
+    &:hover {
+      text-decoration: underline;
+      color: @primary-color;
+      cursor: pointer;
+    }
+  }
+}
+.icons {
+  .icon-item {
+    width: 120px;
+    height: 128px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+  }
 }
