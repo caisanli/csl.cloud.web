@@ -13,13 +13,13 @@ import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 
 interface IProps extends IFileContainerProps {}
 interface IProps extends ConnectProps {
-  file: FileModelState
+  file: FileModelState;
 }
 const iconStyle = {
   fontSize: '18px',
   verticalAlign: 'sub',
-  color: '#40a9ff'
-}
+  color: '#40a9ff',
+};
 const IndexPage = function(props: IProps) {
   const List = props.file.style === 'icon' ? IconList : TableList;
   const [elem, setElem] = useState();
@@ -28,54 +28,40 @@ const IndexPage = function(props: IProps) {
       key: '00',
       width: 40,
       render(data: any) {
-        if(data.parentId)
-          return <FolderOutlined style={ iconStyle } />
-        return <FileOutlined style={ iconStyle } />;
-      }
+        if (data.parentId) return <FolderOutlined style={iconStyle} />;
+        return <FileOutlined style={iconStyle} />;
+      },
     },
     {
       key: '01',
       label: '文件名',
       value: 'name',
       width: '50%',
+      link: true,
       ellipsis: true,
-      render(data: any) {
-        return (
-          <span className={ styles.tableName } onClick={ (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => onClickName(e, data) }>{ data.name }</span>
-        );
-      },
+      onClickLink: onClickName,
     },
     {
       key: '02',
       label: '大小',
       value: 'size',
       render(data: any) {
-        return (
-          <>
-            { bytesToSize(data.size) }
-          </>
-        );
-      }
+        return <>{bytesToSize(data.size)}</>;
+      },
     },
     {
       key: '03',
       label: '修改日期',
       value: 'modifyDate',
       render(data: any) {
-        return (
-          <>
-            { msToDate(data.modifyDate) }
-          </>
-        )
-      }
+        return <>{msToDate(data.modifyDate)}</>;
+      },
     },
   ];
 
-   // 点击名称
-  function onClickName(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, data: any) {
-    e.stopPropagation();
-    if(props.onClickColumn)
-      props.onClickColumn(data);
+  // 点击名称
+  function onClickName(data: any) {
+    if (props.onClickColumn) props.onClickColumn(data);
   }
   function onRef(elem) {
     setElem(elem);
@@ -85,23 +71,23 @@ const IndexPage = function(props: IProps) {
     <>
       {/* 工具栏 */}
       <Toolbar
-        tools={ tools }
+        tools={tools}
         canCreateFolder
-        onCreateFolder={ onCreateFolder }
-        onSearch={ props.onSearch }
-        onClick={ onClickTool }
+        onCreateFolder={onCreateFolder}
+        onSearch={props.onSearch}
+        onClick={onClickTool}
       />
       {/* 面包屑 */}
-      { props.crumbs && <Crumb crumbs={ crumbs } /> }
+      {props.crumbs && <Crumb crumbs={crumbs} />}
       {/* 列表 */}
       <div className={styles.list} id="list">
         <Scroll onRef={onRef}>
-          <List {...otherProps } columns={ columns } scrollSelector={elem} />
+          <List {...otherProps} columns={columns} scrollSelector={elem} />
         </Scroll>
       </div>
     </>
   );
-}
+};
 const mapStateProps = state => ({
   file: state.file,
 });
