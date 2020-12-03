@@ -6,6 +6,7 @@ interface IProps {
   selector: string; // 需要选中的元素
   scrollSelector: string | Element | HTMLElement; // 滚动元素
   onSelect?: (selected: ISelect[]) => void; // 监听
+  onEnd?: () => void;
   [key: string]: any;
 }
 interface ISelect {
@@ -100,15 +101,7 @@ export default class Selecting extends React.Component<IProps, IState> {
         top = this.prevTop + height;
         height = Math.abs(height);
       }
-      this.setState(
-        {
-          width,
-          height,
-          top,
-          left,
-        },
-        this.selecting,
-      );
+      this.setState({ width, height, top, left }, this.selecting);
     }
   }
   selecting() {
@@ -125,18 +118,24 @@ export default class Selecting extends React.Component<IProps, IState> {
         selectElem.push(elem);
       }
     });
-    if (this.props.onSelect) this.props.onSelect(selectElem);
+    if (this.props.onSelect)
+      this.props.onSelect(selectElem);
   }
   // mouseup
   mouseUp() {
-    this.isDown = false;
     clearTimeout(this.timer);
-    this.setState({
-      width: 0,
-      height: 0,
-      left: 0,
-      top: 0,
-    });
+    if(this.isDown) {
+      this.isDown = false;
+      this.setState({
+        width: 0,
+        height: 0,
+        left: 0,
+        top: 0,
+      });
+      this.props.onEnd
+      && this.props.onEnd();
+    }
+
   }
   componentDidMount() {
     this.elem = ReactDOM.findDOMNode(this) as Element;
