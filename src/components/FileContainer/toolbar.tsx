@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { FC } from 'react';
 import { Upload, Button, Input, Dropdown, Menu } from 'antd';
 import { FileModelState, ConnectProps, connect } from 'umi';
 import { IToolBar } from '@/types';
@@ -17,19 +17,20 @@ const { Search } = Input;
 interface IProps extends ConnectProps {
   file: FileModelState;
   canCreateFolder?: boolean;
-  tools: IToolBar[];
+  tools?: IToolBar[];
   onSearch?: (name: string) => void;
   onCreateFolder?: () => void;
+  onClick?: (data: IToolBar) => void;
 }
 
-const IndexPage: FC<IProps> = function(props) {
+const IndexPage = function(props: IProps) {
   const { file } = props;
   /**
    * 点击工具栏按钮
    * @param tool
    */
   function onClick(tool: IToolBar) {
-    if (tool.onClick) tool.onClick();
+    props.onClick && props.onClick(tool);
   }
   /**
    * 搜索文件
@@ -109,16 +110,18 @@ const IndexPage: FC<IProps> = function(props) {
             新建文件夹
           </Button>
         ) : null}
-        {props.tools.map(tool => (
-          <Button
-            className={styles.toolBtn}
-            key={tool.type}
-            icon={tool.icon}
-            onClick={() => onClick(tool)}
-          >
-            {tool.name}
-          </Button>
-        ))}
+        {
+          props.tools && props.tools.map(tool => (
+            <Button
+              className={styles.toolBtn}
+              key={tool.type}
+              icon={tool.icon}
+              onClick={() => onClick(tool)}
+            >
+              {tool.name}
+            </Button>
+          ))
+        }
       </div>
       <div className={styles.toolbarRight}>
         {/* 文件搜索框 */}
