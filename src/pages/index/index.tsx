@@ -3,7 +3,6 @@ import { FileModelState, ConnectProps, connect } from 'umi';
 import FileContainer from '@/components/FileContainer';
 import { Folder, Rename, delFolder } from '@/components/FileOperate';
 import {
-  DownloadOutlined,
   ShareAltOutlined,
   DeleteOutlined,
   EditOutlined,
@@ -19,9 +18,7 @@ interface IProps extends ConnectProps {
   file: FileModelState;
 }
 
-const tools: IToolBar[] = []
-
-const Index: FC<IProps> = function (props: IProps) {
+const Index = function (props: IProps) {
 
   // 文件夹菜单
   const folderRightMenu: IContextMenu[] = [
@@ -31,7 +28,6 @@ const Index: FC<IProps> = function (props: IProps) {
       icon: <EditOutlined />,
       onClick(data: any) {
         setFId(data.id);
-        setFType('update');
         setFceDate(Date.now());
       },
     },
@@ -105,38 +101,38 @@ const Index: FC<IProps> = function (props: IProps) {
       data: { crumbs, files, folders, page },
     } = await fileApi.query(folder, type, order, 1, 10);
     setCrumbs(crumbs);
+    setTools([])
     setList(folders.concat(files));
   }
   // 文件夹
   const [fceDate, setFceDate] = useState<number>();
   const [fId, setFId] = useState<string>();
-  const [fType, setFType] = useState<'create' | 'update'>('create');
   function onCreateFolder() {
-    setFType('create');
     setFceDate(Date.now());
   }
   // 文件
   const [renameDate, setRenameDate] = useState<number>();
   const [fileId, setFileId] = useState<string>();
   const [fileName, setFileName] = useState<string>();
-  const [ moveDate, setMoveDate ] = useState<number>();
-  const [ moveIds, setMoveIds ] = useState<string>();
   const [selected, setSelected] = useState<any[]>([]);
   // 操作完成的回调
   function onSuccess() {
     query();
   }
-
+  // dispatch
+  function dispatch(folder: string) {
+    props.dispatch && props.dispatch({
+      type: 'file/setFolder',
+      payload: {
+        ...props.file,
+        folder
+      }
+    })
+  }
   // 点击项
   function onClickColumn(data: any) {
     if (data.parentId) { // 点击了文件夹
-      props.dispatch && props.dispatch({
-        type: 'file/setFolder',
-        payload: {
-          ...props.file,
-          folder: data.id
-        }
-      })
+      dispatch(data.id);
     } else { // 点击了文件
 
     }
@@ -176,18 +172,28 @@ const Index: FC<IProps> = function (props: IProps) {
   function onClickTool(tool: IToolBar) {
     switch(tool.type) {
       case 'move':
-        move();
+      case 'copy':
+        move(tool.type);
         break;
     }
   }
-  function move() {
+  const [ moveDate, setMoveDate ] = useState<number>();
+  const [ moveIds, setMoveIds ] = useState<string>();
+  const [ moveType, setMoveType ] = useState<string>();
+  function move(type: string) {
     let ids: string[] = [];
     selected.forEach(d => {
       ids.push(d.id);
     })
+    setMoveType(type);
     setMoveIds(ids.join(','));
     setMoveDate(Date.now());
   }
+
+  function onMoveSuccess(folder: string) {
+    dispatch(folder);
+  }
+
   useEffect(function () {
     query();
   }, [props.file]);
@@ -199,30 +205,34 @@ const Index: FC<IProps> = function (props: IProps) {
         type="person"
         canCreateFolder
         crumbs={crumbs}
-        onCreateFolder={onCreateFolder}
         tools={tools}
         contextMenu={contextMenu}
         onClickColumn={onClickColumn}
         onSelect={onSelect}
         onClickTool={ onClickTool }
+        onToolbarSuccess={ onSuccess }
       />
+      {/* 编辑文件夹 */}
       <Folder
         now={fceDate}
         id={fId}
         data={{ parentId: folder }}
-        type={fType}
-        onSuccess={onSuccess}
+        type='update'
+        onSuccess={ onSuccess }
       />
+      {/* 重命名 */}
       <Rename
         id={fileId}
         now={renameDate}
         data={{ name: fileName }}
         onSuccess={onSuccess}
       />
+      {/* 移动/复制文件 */}
       <Move
         now={ moveDate }
-        data={{ ids: moveIds }}
-        onSuccess={onSuccess}
+        data={{ ids: moveIds, current: folder }}
+        type={ moveType }
+        onSuccess={ onMoveSuccess }
       />
     </>
   );
