@@ -44,7 +44,7 @@ interface IFileContainerProps {
   type: 'person' | 'group';
   tools?: IToolBar[];
   contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
-  onCreateFolder?: () => void;
+  onToolbarSuccess?: (data?: void) => void;
   onSearch?: (name: string) => void;
   onClickColumn?: (data: any) => void;
   onSelect?: (data: any[]) => void;
@@ -77,11 +77,11 @@ interface IToolBar {
 interface IOperateProps {
   now?: number;
   id?: string;
-  type?: 'update' | 'create';
+  type?: string;
   data?: {
     [key: string]: any;
   };
-  onSuccess?: () => void;
+  onSuccess?: (data?: any) => void;
   onCancel?: () => void;
 }
 
