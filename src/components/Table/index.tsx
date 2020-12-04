@@ -22,6 +22,7 @@ interface IProps {
   scrollSelector?: string | HTMLElement | Element; // 滚动区域元素
   select?: boolean; // 是否有选择框
   selecting?: boolean; // 是否框选
+  hiddenHead?: boolean; // 隐藏标头
   contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]); // 右键菜单
   onSelect?: (data: any[]) => void; // 监听选中
 }
@@ -183,17 +184,17 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 生成表头
   createHead() {
-    const { dataSource, columns } = this.props;
+    const { dataSource, columns, select } = this.props;
     const { checked } = this.state;
     return (
       <div className={styles.thead}>
         <div className={styles.tr}>
-          {this.props.select ? (
+          {select ? (
             <div className={[styles.th, styles.select].join(' ')}>
               <Checkbox
                 onClick={this.onClickCheckAllBtn}
                 indeterminate={
-                  !!checked.length && checked.length < dataSource.length
+                 !!(checked.length && checked.length < dataSource.length)
                 }
                 checked={
                   !!(dataSource.length && dataSource.length === checked.length)
@@ -210,7 +211,7 @@ export default class Table extends React.Component<IProps, IState> {
                     styles.th,
                     col.ellipsis ? styles.ellipsis : '',
                   ].join(' ')}
-                  style={this.columnWidth(col)}
+                  style={ this.columnWidth(col) }
                 >
                   {col.label}
                 </div>
@@ -248,6 +249,7 @@ export default class Table extends React.Component<IProps, IState> {
                             styles.td,
                             col.ellipsis ? styles.ellipsis : '',
                           ].join(' ')}
+                          style={ this.columnWidth(col) }
                         >
                           {col.render ? (
                             col.render(data)
@@ -275,16 +277,17 @@ export default class Table extends React.Component<IProps, IState> {
   }
   // 生成表格
   createTable() {
-    const { columns } = this.props;
+    const { columns, hiddenHead } = this.props;
     if (!columns) return null;
     const fixed = !!columns.find(col => col.ellipsis);
     return (
       <div className={[styles.table, fixed ? styles.tableFixed : ''].join(' ')}>
-        {this.createHead()}
+        { !hiddenHead && this.createHead() }
         {this.createBody()}
       </div>
     );
   }
+  // 生成空数据显示
   createEmpty() {
     return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
   }
@@ -300,6 +303,13 @@ export default class Table extends React.Component<IProps, IState> {
     if (typeof defaultWidth === 'number') width = defaultWidth + 'px';
     else width = defaultWidth;
     return { width };
+  }
+  componentDidUpdate(prevProps: IProps) {
+    if(prevProps.dataSource !== this.props.dataSource) {
+      this.setState({
+        checked: []
+      })
+    }
   }
   componentDidMount() {
     document.addEventListener('click', this.onClickBody.bind(this));
