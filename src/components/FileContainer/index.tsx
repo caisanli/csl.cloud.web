@@ -66,16 +66,16 @@ const IndexPage = function(props: IProps) {
   function onRef(elem) {
     setElem(elem);
   }
-  const { onClickTool, crumbs, onCreateFolder, tools, ...otherProps } = props;
+  const { onClickTool, crumbs, tools, onToolbarSuccess, ...otherProps } = props;
   return (
     <>
       {/* 工具栏 */}
       <Toolbar
         tools={tools}
         canCreateFolder
-        onCreateFolder={onCreateFolder}
-        onSearch={props.onSearch}
-        onClick={onClickTool}
+        onSearch={ props.onSearch }
+        onClick={ onClickTool }
+        onSuccess={ onToolbarSuccess }
       />
       {/* 面包屑 */}
       {props.crumbs && <Crumb crumbs={crumbs} />}

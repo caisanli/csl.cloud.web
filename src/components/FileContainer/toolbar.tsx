@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
-import { Upload, Button, Input, Dropdown, Menu } from 'antd';
+import React, { useState } from 'react';
+import { Button, Input, Dropdown, Menu } from 'antd';
 import { FileModelState, ConnectProps, connect } from 'umi';
+import Upload from '@/components/Upload';
 import { IToolBar } from '@/types';
 import {
   UploadOutlined,
@@ -12,6 +13,7 @@ import {
   MenuOutlined,
 } from '@ant-design/icons';
 import styles from './index.module.less';
+import { Folder } from '../FileOperate';
 const { Search } = Input;
 
 interface IProps extends ConnectProps {
@@ -19,12 +21,12 @@ interface IProps extends ConnectProps {
   canCreateFolder?: boolean;
   tools?: IToolBar[];
   onSearch?: (name: string) => void;
-  onCreateFolder?: () => void;
   onClick?: (data: IToolBar) => void;
+  onSuccess?: (data?: any) => void;
 }
 
 const IndexPage = function(props: IProps) {
-  const { file } = props;
+  const { file, onSuccess } = props;
   /**
    * 点击工具栏按钮
    * @param tool
@@ -93,17 +95,32 @@ const IndexPage = function(props: IProps) {
         payload,
       });
   }
+  // 文件夹
+  const [fceDate, setFceDate] = useState<number>();
+  function onCreateFolder() {
+    setFceDate(Date.now());
+  }
   return (
     <div className={styles.toolbar}>
       <div className={styles.toolbarLeft}>
-        <Upload className={styles.uploadBtn}>
-          <Button type="primary" icon={<UploadOutlined />}>
-            上传
+        <Upload
+          action="/file/upload"
+          data={{
+            folder: file.folder
+          }}
+          style={{
+            marginRight: '15px'
+          }}
+          onSuccess={ onSuccess }
+        >
+          <Button size="middle" type="primary" icon={<UploadOutlined />}>
+            上传文件
           </Button>
         </Upload>
+
         {props.canCreateFolder ? (
           <Button
-            onClick={props.onCreateFolder}
+            onClick={ onCreateFolder }
             style={{ marginRight: '10px' }}
             icon={<FolderAddOutlined />}
           >
@@ -135,10 +152,17 @@ const IndexPage = function(props: IProps) {
           style={{
             marginLeft: '5px',
           }}
-          onClick={onChangeStyle}
-          icon={<StyleIcon />}
+          onClick={ onChangeStyle }
+          icon={ <StyleIcon /> }
         />
       </div>
+      {/* 创建文件夹 */}
+      <Folder
+        now={ fceDate }
+        data={{ parentId: file.folder }}
+        type='create'
+        onSuccess={ onSuccess }
+      />
     </div>
   );
 };
