@@ -21,16 +21,15 @@ export function getOffset(elem: HTMLElement): { left: number; top: number } {
  * @returns {string}
  */
 export function bytesToSize(size: number): string {
-  if(size !== 0 && !size)
-    return '';
-  const units = ['B', 'KB', 'MB', 'TB', 'PB', 'TB']
+  if (size !== 0 && !size) return '';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'TB'];
   let index = 0;
-  while(size >= 1024 && index < units.length) {
+  while (size >= 1024 && index < units.length) {
     index++;
     size = size / 1024;
   }
   size = Math.round(size * 100) / 100;
-  return `${ size }${ units[index] }`;
+  return `${size}${units[index]}`;
 }
 
 /**
@@ -40,18 +39,18 @@ export function bytesToSize(size: number): string {
  * @returns {string}
  */
 export function msToDate(ms: string): string {
-	if(!ms) return '';
-	let date = new Date(ms);
-	let year = date.getFullYear();
-	let mouth: string | number = date.getMonth() + 1;
-	let day: string | number = date.getDate();
-	let hour: string | number = date.getHours();
-	let minute = date.getMinutes();
-	let second = date.getSeconds();
-	mouth = mouth < 10 ? '0' + mouth : mouth;
-	day = day < 10 ? '0' + day : day;
-	hour = hour < 10 ? '0' + hour : hour;
-	return `${year}-${mouth}-${day} ${hour}:${minute}:${second}`;
+  if (!ms) return '';
+  let date = new Date(ms);
+  let year = date.getFullYear();
+  let mouth: string | number = date.getMonth() + 1;
+  let day: string | number = date.getDate();
+  let hour: string | number = date.getHours();
+  let minute = date.getMinutes();
+  let second = date.getSeconds();
+  mouth = mouth < 10 ? '0' + mouth : mouth;
+  day = day < 10 ? '0' + day : day;
+  hour = hour < 10 ? '0' + hour : hour;
+  return `${year}-${mouth}-${day} ${hour}:${minute}:${second}`;
 }
 
 /**
@@ -61,7 +60,8 @@ export function msToDate(ms: string): string {
  */
 export function uuid(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r&0x3|0x8);
+    let r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
