@@ -95,4 +95,25 @@ type SORT = 'date' | 'size' | 'name';
 
 type ORDER = 'DESC' | 'ASC';
 
-export { INavItem, IFileContainerProps, ITableIconProps, IContextMenu, IToolBar, IOperateProps, IFormInstance, ColumnsType, SORT, ORDER, ICrumbItem, Result };
+interface IUploadFile extends File {
+  id?: string;
+  folder?: string;
+  process?: number;
+  status?: 'waiting' | 'pending' | 'success' | 'error'
+}
+
+export {
+  IUploadFile,
+  INavItem,
+  IFileContainerProps,
+  ITableIconProps,
+  IContextMenu,
+  IToolBar,
+  IOperateProps,
+  IFormInstance,
+  ColumnsType,
+  SORT,
+  ORDER,
+  ICrumbItem,
+  Result
+};
