@@ -53,3 +53,15 @@ export function msToDate(ms: string): string {
 	hour = hour < 10 ? '0' + hour : hour;
 	return `${year}-${mouth}-${day} ${hour}:${minute}:${second}`;
 }
+
+/**
+ * 生辰UUID
+ * @export
+ * @returns {string}
+ */
+export function uuid(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+}
