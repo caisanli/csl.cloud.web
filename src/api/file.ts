@@ -64,12 +64,13 @@ export default {
     return get('/file/chunk/process', { name, size, modifyDate })
   },
   /**
-   * 删除文件
-   * @param {string} id
+   * 批量删除文件、文件夹
+   * @param {string} fileIds
+   * @param {string} folderIds
    * @returns
    */
-  remove(id: string) {
-    return del('/file/' + id)
+  remove(fileIds: string = '', folderIds: string = '') {
+    return del('/file',{ fileIds, folderIds })
   },
   /**
    * 移动文件
