@@ -14,7 +14,6 @@ interface INavItem {
   children?: INavItem[];
 }
 
-
 /**
  * 面包屑
  */
@@ -45,7 +44,6 @@ interface IFileContainerProps {
   tools?: IToolBar[];
   contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
   onToolbarSuccess?: (data?: void) => void;
-  onSearch?: (name: string) => void;
   onClickColumn?: (data: any) => void;
   onSelect?: (data: any[]) => void;
   onClickTool?: (data: IToolBar) => void;
@@ -70,7 +68,7 @@ interface IToolBar {
   name: string;
   icon?: ReactNode;
   type: string;
-  onClick?: () => void
+  onClick?: () => void;
 }
 
 /**
@@ -91,7 +89,7 @@ type Result = {
   data: any;
   code: number;
   message: string;
-}
+};
 
 type SORT = 'date' | 'size' | 'name';
 
@@ -101,13 +99,13 @@ interface IUploadFile extends File {
   id?: string;
   folder?: string;
   process?: number;
-  status?: 'waiting' | 'pending' | 'success' | 'error'
+  status?: 'waiting' | 'pending' | 'success' | 'error';
 }
 
 interface IPage {
-  count: number,
-  page: number,
-  total: number
+  count: number;
+  page: number;
+  total: number;
 }
 
 export {
@@ -124,5 +122,5 @@ export {
   SORT,
   ORDER,
   ICrumbItem,
-  Result
+  Result,
 };
