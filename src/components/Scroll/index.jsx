@@ -42,7 +42,7 @@ class Scroll extends React.Component {
     };
   }
   componentDidMount() {
-    setTimeout(() => {
+    // setTimeout(() => {
       // 挂载完成
       this.scrollBarWidth = this._getBarWidth();
       this._events();
@@ -50,7 +50,7 @@ class Scroll extends React.Component {
       if (typeof this.props.onRef === 'function')
         this.props.onRef(this.$content.current);
       if (this.props.center) this._setScrollCenter();
-    }, 0);
+    // }, 0);
   }
   componentWillUnmount() {
     // 销毁之前
@@ -85,6 +85,7 @@ class Scroll extends React.Component {
     if (elem) this.$content.removeChild(elem);
   }
   _events() {
+    let { onChange } = this.props;
     // 事件列表
     this.eventOption.boxHeight = this.$content.current.offsetHeight;
     this.eventOption.boxWidth =
@@ -96,6 +97,16 @@ class Scroll extends React.Component {
     if (window.MutationObserver) {
       const observer = new MutationObserver(() => {
         this._setThumbWidthHeight();
+        // console.log('改变了...', onChange)
+        // if(typeof onChange === 'function') {
+        //   let { scrollTop, scrollLeft } = this.$content.current;
+        //   onChange({
+        //     scrollTop,
+        //     scrollLeft,
+        //     isBottom: this._isBottom()
+        //   });
+        // }
+
       });
       observer.observe(this.$content.current, config);
     }
@@ -118,6 +129,11 @@ class Scroll extends React.Component {
     this._setThumbWidthHeight();
     this._onScroll();
   }
+  // 是否到底
+  _isBottom() {
+    let { scrollTop,  scrollHeight, clientHeight } = this.$content.current;
+    return clientHeight >= scrollHeight - scrollTop;
+  }
   _onScroll() {
     // 监听滚动事件
     let {
@@ -126,13 +142,16 @@ class Scroll extends React.Component {
       scrollHeight,
       scrollWidth,
     } = this.$content.current;
+    let { onScroll } = this.props;
     let heightScale = scrollTop / scrollHeight;
     let widthScale = scrollLeft / scrollWidth;
     let top = heightScale * this.eventOption.boxHeight;
     let left = widthScale * this.eventOption.boxWidth;
     this.eventOption.ty = top;
     this.eventOption.tx = left;
-    if (this.props.scroll) this.props.scroll(scrollLeft, scrollTop);
+    if ( typeof onScroll === 'function') {
+      onScroll({scrollLeft, scrollTop, isBottom: this._isBottom()});
+    }
     this.setState({
       yt: top,
       xl: left,
