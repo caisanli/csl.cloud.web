@@ -1,7 +1,7 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileModelState, ConnectProps, connect } from 'umi';
 import FileContainer from '@/components/FileContainer';
-import { Folder, Rename, delFolder } from '@/components/FileOperate';
+import { Folder, Rename, delFolder, del } from '@/components/FileOperate';
 import {
   ShareAltOutlined,
   DeleteOutlined,
@@ -9,7 +9,7 @@ import {
   CopyOutlined,
   ScissorOutlined
 } from '@ant-design/icons';
-import { IContextMenu, ICrumbItem, IToolBar } from '@/types';
+import { IContextMenu, ICrumbItem, IPage, IToolBar } from '@/types';
 import fileApi from '@/api/file';
 import Move from '@/components/FileOperate/Move';
 import { copyBtn, delBtn, downBtn, moveBtn, renameBtn, shareBtn } from '@/components/FileContainer/tools';
@@ -92,17 +92,25 @@ const Index = function (props: IProps) {
 
   const [crumbs, setCrumbs] = useState<ICrumbItem[]>([]);
   const [list, setList] = useState([]);
+  const [page, setPage] = useState<IPage>()
   const {
     folder,
     sort: { order, type },
+    no
   } = props.file;
   async function query() {
     const {
       data: { crumbs, files, folders, page },
-    } = await fileApi.query(folder, type, order, 1, 10);
+    } = await fileApi.query(folder, type, order, no, 10);
+    // console.log('page：', page)
+    setPage(page);
     setCrumbs(crumbs);
     setTools([])
-    setList(folders.concat(files));
+    if(no === 1) {
+      setList(folders.concat(files));
+    } else {
+      setList(list.concat(files));
+    }
   }
   // 文件夹
   const [fceDate, setFceDate] = useState<number>();
@@ -117,10 +125,19 @@ const Index = function (props: IProps) {
   const [selected, setSelected] = useState<any[]>([]);
   // 操作完成的回调
   function onSuccess() {
-    query();
+    dispatchNo(1);
+  }
+  function dispatchNo(no: number) {
+    props.dispatch && props.dispatch({
+      type: 'file/setNo',
+      payload: {
+        ...props.file,
+        no
+      }
+    })
   }
   // dispatch
-  function dispatch(folder: string) {
+  function dispatchFolder(folder: string) {
     props.dispatch && props.dispatch({
       type: 'file/setFolder',
       payload: {
@@ -132,7 +149,7 @@ const Index = function (props: IProps) {
   // 点击项
   function onClickColumn(data: any) {
     if (data.parentId) { // 点击了文件夹
-      dispatch(data.id);
+      dispatchFolder(data.id);
     } else { // 点击了文件
 
     }
@@ -156,13 +173,13 @@ const Index = function (props: IProps) {
     setSelected(data);
     let tools:IToolBar[] = [];
     switch(type) {
-      case 1 :
+      case 1 : // 文件
         tools = [shareBtn, downBtn, delBtn, renameBtn, copyBtn, moveBtn];
         break;
-      case 2:
+      case 2: // 文件夹
         tools = [shareBtn, delBtn, renameBtn];
         break;
-      case 3:
+      case 3: // 文件 + 文件夹
         tools = [shareBtn];
         break;
     }
@@ -170,12 +187,28 @@ const Index = function (props: IProps) {
   }
   // 点击工具栏
   function onClickTool(tool: IToolBar) {
+    let idsObj = getSelectedIds();
     switch(tool.type) {
       case 'move':
       case 'copy':
         move(tool.type);
         break;
+      case 'delete':
+        del(idsObj.files, idsObj.folders, onSuccess);
+        break;
     }
+  }
+  // 获取
+  function getSelectedIds(): { files: string, folders: string } {
+    let files: string[] = [],
+        folders: string[] = [];
+    selected.forEach(sel => {
+      if(sel.parentId)
+        folders.push(sel.id)
+      else
+        files.push(sel.id);
+    })
+    return { files: files.join(','), folders: folders.join(',') }
   }
   const [ moveDate, setMoveDate ] = useState<number>();
   const [ moveIds, setMoveIds ] = useState<string>();
@@ -191,7 +224,22 @@ const Index = function (props: IProps) {
   }
 
   function onMoveSuccess(folder: string) {
-    dispatch(folder);
+    dispatchFolder(folder);
+  }
+
+  let scrollTimer: NodeJS.Timeout;
+  function onScroll(data: any) {
+    console.log('scroll...')
+    if(scrollTimer)
+      clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      console.log('page：', page)
+      if(!page) return ;
+      if(data.isBottom && page.page < page.count) {
+        console.log(page.page)
+        dispatchNo(no + 1)
+      }
+    }, 500)
   }
 
   useEffect(function () {
@@ -211,6 +259,8 @@ const Index = function (props: IProps) {
         onSelect={onSelect}
         onClickTool={ onClickTool }
         onToolbarSuccess={ onSuccess }
+        onScrollChange={ onScroll }
+        onScroll={ onScroll }
       />
       {/* 编辑文件夹 */}
       <Folder
