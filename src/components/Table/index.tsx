@@ -306,6 +306,7 @@ export default class Table extends React.Component<IProps, IState> {
   }
   componentDidUpdate(prevProps: IProps) {
     if(prevProps.dataSource !== this.props.dataSource) {
+      this.checkAll = false;
       this.setState({
         checked: []
       })
