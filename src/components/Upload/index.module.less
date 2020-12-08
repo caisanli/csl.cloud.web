@@ -14,8 +14,17 @@
   }
   &-box {
     position: absolute;
-    bottom: 0;
     right: 20px;
+    transition: bottom 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+    &.min {
+      bottom: -250px;
+    }
+    &.max {
+      bottom: 0;
+    }
+    &.close {
+      opacity: 0;
+    }
   }
   &-content {
     width: 450px;
@@ -25,12 +34,15 @@
     box-shadow: 0 0 3px 1px #9bc2e6;
   }
   &-head {
-    padding: 5px 10px 0;
+    padding: 8px 10px 4px;
   }
   &-tool {
     margin-right: 10px;
     cursor: pointer;
     font-size: 18px;
     vertical-align: sub;
+  }
+  &-body {
+    height: 250px;
   }
 }

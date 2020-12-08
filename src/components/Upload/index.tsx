@@ -148,9 +148,10 @@ class Index extends React.Component<IUploadProps, State> {
             callback();
             return;
           }
-          file.process = res.data.process * 100;
+          let process = res.data.process;
+          file.process = process;
           this.setFileStatus(file.id, {
-            process: file.process,
+            process ,
             status: 'pending',
           });
           this.upload(total, file, index, callback);

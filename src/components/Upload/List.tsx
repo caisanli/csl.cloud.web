@@ -15,6 +15,7 @@ const defaultProps = {
   list: [],
   message: '',
 };
+
 export type FileItem = {
   name: string;
   id: string;
@@ -72,12 +73,25 @@ const columns: IColumn[] = [
 type Status = 'close' | 'min' | 'max';
 const Index = function(props: IProps) {
   let { message, list } = props;
-  const [status, setStatus] = useState<Status>('max');
+  const [status, setStatus] = useState<Status>('close');
   useEffect(() => {
-    setStatus('max');
-  }, [props.list]);
+    if(list.length && status !== 'max')
+      setStatus('max');
+  }, [list]);
+
+  function onChangeStatus(status: Status) {
+    setStatus(status)
+  }
+
+  let boxClassName:string[] = [styles.uploadBox];
+  if(status === 'max')
+    boxClassName.push(styles.max)
+  if(status === 'min')
+    boxClassName.push(styles.min)
+  if(status === 'close')
+    boxClassName.push(styles.close)
   return createPortal(
-    <div className={styles.uploadBox}>
+    <div className={boxClassName.join(' ')}>
       <div className={styles.uploadContent}>
         <Row
           justify="space-between"
@@ -87,12 +101,12 @@ const Index = function(props: IProps) {
           <Col>{message}</Col>
           <Col className={styles.uploadTools}>
             {status === 'min' && (
-              <BorderOutlined className={styles.uploadTool} />
+              <BorderOutlined className={styles.uploadTool} onClick={ () => onChangeStatus('max') } />
             )}
             {status === 'max' && (
-              <MinusOutlined className={styles.uploadTool} />
+              <MinusOutlined className={styles.uploadTool} onClick={ () => onChangeStatus('min') } />
             )}
-            <CloseOutlined className={styles.uploadTool} />
+            <CloseOutlined className={styles.uploadTool} onClick={ () => onChangeStatus('close') } />
           </Col>
         </Row>
         <div className={styles.uploadBody}>
