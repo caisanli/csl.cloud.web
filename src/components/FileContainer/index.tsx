@@ -66,7 +66,7 @@ const IndexPage = function(props: IProps) {
   function onRef(elem) {
     setElem(elem);
   }
-  const { onClickTool, crumbs, tools, onToolbarSuccess, ...otherProps } = props;
+  const { onClickTool, crumbs, tools, onToolbarSuccess, onScrollChange, onScroll, ...otherProps } = props;
   return (
     <>
       {/* 工具栏 */}
@@ -81,7 +81,11 @@ const IndexPage = function(props: IProps) {
       {props.crumbs && <Crumb crumbs={crumbs} />}
       {/* 列表 */}
       <div className={styles.list} id="list">
-        <Scroll onRef={onRef}>
+        <Scroll
+          onRef={onRef}
+          onChange={ onScrollChange }
+          onScroll={ onScroll }
+        >
           <List {...otherProps} columns={columns} scrollSelector={elem} />
         </Scroll>
       </div>
