@@ -27,6 +27,8 @@ class Scroll extends React.Component {
     // 绑定变量
     this.$content = React.createRef();
     this.$horizontalThumb = React.createRef();
+    this.observer = null;
+    this.prevTop = 0;
     // 事件处理时的参数
     this.eventOption = {
       verticalOffset: 0,
@@ -42,7 +44,7 @@ class Scroll extends React.Component {
     };
   }
   componentDidMount() {
-    // setTimeout(() => {
+    setTimeout(() => {
       // 挂载完成
       this.scrollBarWidth = this._getBarWidth();
       this._events();
@@ -50,7 +52,7 @@ class Scroll extends React.Component {
       if (typeof this.props.onRef === 'function')
         this.props.onRef(this.$content.current);
       if (this.props.center) this._setScrollCenter();
-    // }, 0);
+    }, 0);
   }
   componentWillUnmount() {
     // 销毁之前
@@ -59,6 +61,7 @@ class Scroll extends React.Component {
     document.removeEventListener('mousemove', this._onYMouseMove);
     document.removeEventListener('mouseup', this._onMouseup);
     window.removeEventListener('resize', this._onResize);
+    this.observer.disconnect();
   }
   _setScrollCenter() {
     // 设置
@@ -85,7 +88,6 @@ class Scroll extends React.Component {
     if (elem) this.$content.removeChild(elem);
   }
   _events() {
-    let { onChange } = this.props;
     // 事件列表
     this.eventOption.boxHeight = this.$content.current.offsetHeight;
     this.eventOption.boxWidth =
@@ -93,22 +95,23 @@ class Scroll extends React.Component {
     // 初始化配置
     const config = {
       childList: true,
+      subtree: true,
     };
-    if (window.MutationObserver) {
-      const observer = new MutationObserver(() => {
+    if (window.MutationObserver && !this.observer) {
+      this.observer = new MutationObserver(() => {
         this._setThumbWidthHeight();
-        // console.log('改变了...', onChange)
-        // if(typeof onChange === 'function') {
-        //   let { scrollTop, scrollLeft } = this.$content.current;
-        //   onChange({
-        //     scrollTop,
-        //     scrollLeft,
-        //     isBottom: this._isBottom()
-        //   });
-        // }
-
+        console.log('内容更新...');
+        if (typeof this.props.onChange === 'function') {
+          let { scrollTop, scrollLeft } = this.$content.current;
+          this.props.onChange({
+            scrollTop,
+            scrollLeft,
+            isDown: true,
+            isBottom: this._isBottom(),
+          });
+        }
       });
-      observer.observe(this.$content.current, config);
+      this.observer.observe(this.$content.current, config);
     }
 
     window.addEventListener('resize', this._onResize.bind(this));
@@ -131,7 +134,7 @@ class Scroll extends React.Component {
   }
   // 是否到底
   _isBottom() {
-    let { scrollTop,  scrollHeight, clientHeight } = this.$content.current;
+    let { scrollTop, scrollHeight, clientHeight } = this.$content.current;
     return clientHeight >= scrollHeight - scrollTop;
   }
   _onScroll() {
@@ -149,8 +152,15 @@ class Scroll extends React.Component {
     let left = widthScale * this.eventOption.boxWidth;
     this.eventOption.ty = top;
     this.eventOption.tx = left;
-    if ( typeof onScroll === 'function') {
-      onScroll({scrollLeft, scrollTop, isBottom: this._isBottom()});
+    let is = this.prevTop - scrollTop < 0 ? true : false;
+    this.prevTop = scrollTop;
+    if (typeof onScroll === 'function') {
+      onScroll({
+        scrollLeft,
+        scrollTop,
+        isBottom: this._isBottom(),
+        isDown: is,
+      });
     }
     this.setState({
       yt: top,
