@@ -4,6 +4,7 @@ export interface FileModelState {
   folder: string;
   style: string;
   no: number;
+  name: string;
   sort: {
     type: SORT;
     order: ORDER;
@@ -14,22 +15,14 @@ export interface FileModelType {
   namespace: 'file';
   state: FileModelState;
   reducers: {
-    setStyle: Reducer<FileModelState>;
-    setSort: Reducer<FileModelState>;
-    setFolder: Reducer<FileModelState>;
-    setNo: Reducer<FileModelState>
-  };
-}
-const baseReducer:Reducer<FileModelState> = (state, action) => {
-  return {
-    ...state,
-    ...action.payload,
+    update: Reducer<FileModelState>;
   };
 }
 
 const IndexModel: FileModelType = {
   namespace: 'file',
   state: {
+    name: '',
     folder: '0',
     no: 1,
     style: 'table',
@@ -39,14 +32,14 @@ const IndexModel: FileModelType = {
     },
   },
   reducers: {
-    setStyle: baseReducer,
-    setSort: baseReducer,
-    setFolder: baseReducer,
-    setNo: baseReducer
+    update(state, action) {
+      console.log(action.payload);
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
   },
 };
-
-
-
 
 export default IndexModel;
