@@ -20,7 +20,6 @@ interface IProps extends ConnectProps {
   file: FileModelState;
   canCreateFolder?: boolean;
   tools?: IToolBar[];
-  onSearch?: (name: string) => void;
   onClick?: (data: IToolBar) => void;
   onSuccess?: (data?: any) => void;
 }
@@ -38,8 +37,14 @@ const IndexPage = function(props: IProps) {
    * 搜索文件
    * @param value
    */
+  let searchTimer: NodeJS.Timeout;
   function onSearch(value: string) {
-    if (props.onSearch) props.onSearch(value);
+    if (!searchTimer) clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      dispatch({
+        name: value,
+      });
+    }, 800);
   }
 
   /**
@@ -48,7 +53,7 @@ const IndexPage = function(props: IProps) {
    */
   function onClickSortMenu(e) {
     if (e.key === file.sort.type) {
-      dispatch('file/setSort', {
+      dispatch({
         sort: {
           ...file.sort,
           order: file.sort.order === 'ASC' ? 'DESC' : 'ASC',
@@ -56,7 +61,7 @@ const IndexPage = function(props: IProps) {
       });
       return;
     }
-    dispatch('file/setSort', {
+    dispatch({
       sort: {
         ...file.sort,
         type: e.key,
@@ -84,14 +89,15 @@ const IndexPage = function(props: IProps) {
   // 列表显示方式
   const StyleIcon = file.style === 'table' ? AppstoreOutlined : MenuOutlined;
   function onChangeStyle() {
-    dispatch('file/setStyle', {
+    dispatch({
       style: file.style === 'table' ? 'icon' : 'table',
     });
   }
-  function dispatch(type, payload) {
+  function dispatch(payload: any) {
+    payload.no = 1;
     props.dispatch &&
       props.dispatch({
-        type,
+        type: 'file/update',
         payload,
       });
   }
@@ -106,12 +112,12 @@ const IndexPage = function(props: IProps) {
         <Upload
           action="/file/upload"
           data={{
-            folder: file.folder
+            folder: file.folder,
           }}
           style={{
-            marginRight: '15px'
+            marginRight: '15px',
           }}
-          onSuccess={ onSuccess }
+          onSuccess={onSuccess}
         >
           <Button size="middle" type="primary" icon={<UploadOutlined />}>
             上传文件
@@ -120,15 +126,15 @@ const IndexPage = function(props: IProps) {
 
         {props.canCreateFolder ? (
           <Button
-            onClick={ onCreateFolder }
+            onClick={onCreateFolder}
             style={{ marginRight: '10px' }}
             icon={<FolderAddOutlined />}
           >
             新建文件夹
           </Button>
         ) : null}
-        {
-          props.tools && props.tools.map(tool => (
+        {props.tools &&
+          props.tools.map(tool => (
             <Button
               className={styles.toolBtn}
               key={tool.type}
@@ -137,8 +143,7 @@ const IndexPage = function(props: IProps) {
             >
               {tool.name}
             </Button>
-          ))
-        }
+          ))}
       </div>
       <div className={styles.toolbarRight}>
         {/* 文件搜索框 */}
@@ -152,16 +157,16 @@ const IndexPage = function(props: IProps) {
           style={{
             marginLeft: '5px',
           }}
-          onClick={ onChangeStyle }
-          icon={ <StyleIcon /> }
+          onClick={onChangeStyle}
+          icon={<StyleIcon />}
         />
       </div>
       {/* 创建文件夹 */}
       <Folder
-        now={ fceDate }
+        now={fceDate}
         data={{ parentId: file.folder }}
-        type='create'
-        onSuccess={ onSuccess }
+        type="create"
+        onSuccess={onSuccess}
       />
     </div>
   );

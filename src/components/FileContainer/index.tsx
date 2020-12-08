@@ -66,26 +66,29 @@ const IndexPage = function(props: IProps) {
   function onRef(elem) {
     setElem(elem);
   }
-  const { onClickTool, crumbs, tools, onToolbarSuccess, onScrollChange, onScroll, ...otherProps } = props;
+  const {
+    onClickTool,
+    crumbs,
+    tools,
+    onToolbarSuccess,
+    onScrollChange,
+    onScroll,
+    ...otherProps
+  } = props;
   return (
     <>
       {/* 工具栏 */}
       <Toolbar
         tools={tools}
         canCreateFolder
-        onSearch={ props.onSearch }
-        onClick={ onClickTool }
-        onSuccess={ onToolbarSuccess }
+        onClick={onClickTool}
+        onSuccess={onToolbarSuccess}
       />
       {/* 面包屑 */}
       {props.crumbs && <Crumb crumbs={crumbs} />}
       {/* 列表 */}
       <div className={styles.list} id="list">
-        <Scroll
-          onRef={onRef}
-          onChange={ onScrollChange }
-          onScroll={ onScroll }
-        >
+        <Scroll onRef={onRef} onChange={onScrollChange} onScroll={onScroll}>
           <List {...otherProps} columns={columns} scrollSelector={elem} />
         </Scroll>
       </div>
