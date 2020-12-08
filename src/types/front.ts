@@ -49,6 +49,8 @@ interface IFileContainerProps {
   onClickColumn?: (data: any) => void;
   onSelect?: (data: any[]) => void;
   onClickTool?: (data: IToolBar) => void;
+  onScrollChange?: (data: any) => void;
+  onScroll?: (data: any) => void;
 }
 
 /**
@@ -102,7 +104,14 @@ interface IUploadFile extends File {
   status?: 'waiting' | 'pending' | 'success' | 'error'
 }
 
+interface IPage {
+  count: number,
+  page: number,
+  total: number
+}
+
 export {
+  IPage,
   IUploadFile,
   INavItem,
   IFileContainerProps,
