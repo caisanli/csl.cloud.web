@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FileModelState, ConnectProps, connect } from 'umi';
 import FileContainer from '@/components/FileContainer';
-import { Folder, Rename, delFolder, del } from '@/components/FileOperate';
+import {
+  Folder,
+  Rename,
+  Share,
+  delFolder,
+  del,
+} from '@/components/FileOperate';
 import {
   ShareAltOutlined,
   DeleteOutlined,
@@ -17,7 +23,6 @@ import {
   delBtn,
   downBtn,
   moveBtn,
-  renameBtn,
   shareBtn,
 } from '@/components/FileContainer/tools';
 
@@ -49,7 +54,11 @@ const Index = function(props: IProps) {
       name: '分享',
       value: 'share',
       icon: <ShareAltOutlined />,
-      onClick(data: any) {},
+      onClick(data: any) {
+        setShareFiles('');
+        setShareFolders(data.id);
+        setShareDate(Date.now());
+      },
     },
   ];
   // 文件右键菜单
@@ -76,7 +85,11 @@ const Index = function(props: IProps) {
       name: '分享',
       value: 'share',
       icon: <ShareAltOutlined />,
-      onClick(data: any) {},
+      onClick(data: any) {
+        setShareFolders('');
+        setShareFiles(data.id);
+        setShareDate(Date.now());
+      },
     },
     {
       name: '移动到',
@@ -113,6 +126,7 @@ const Index = function(props: IProps) {
     sort: { order, type },
     no,
   } = props.file;
+  // 查询文件
   async function query() {
     const {
       data: { crumbs, files, folders, page },
@@ -187,10 +201,10 @@ const Index = function(props: IProps) {
     let tools: IToolBar[] = [];
     switch (type) {
       case 1: // 文件
-        tools = [shareBtn, downBtn, delBtn, renameBtn, copyBtn, moveBtn];
+        tools = [shareBtn, downBtn, delBtn, copyBtn, moveBtn];
         break;
       case 2: // 文件夹
-        tools = [shareBtn, delBtn, renameBtn];
+        tools = [shareBtn, delBtn];
         break;
       case 3: // 文件 + 文件夹
         tools = [shareBtn];
@@ -210,6 +224,9 @@ const Index = function(props: IProps) {
       case 'delete':
         del(idsObj.files, idsObj.folders, onSuccess);
         break;
+      case 'share':
+        share();
+        break;
     }
   }
   // 获取
@@ -222,6 +239,7 @@ const Index = function(props: IProps) {
     });
     return { files: files.join(','), folders: folders.join(',') };
   }
+  // 移动、复制
   const [moveDate, setMoveDate] = useState<number>();
   const [moveIds, setMoveIds] = useState<string>();
   const [moveType, setMoveType] = useState<string>();
@@ -234,6 +252,18 @@ const Index = function(props: IProps) {
     dispatch({
       folder,
     });
+  }
+
+  // 分享
+  const [shareDate, setShareDate] = useState<number>();
+  const [shareFils, setShareFiles] = useState<string>();
+  const [shareFolders, setShareFolders] = useState<string>();
+
+  function share() {
+    let obj = getSelectedIds();
+    setShareFiles(obj.files);
+    setShareFolders(obj.folders);
+    setShareDate(Date.now());
   }
 
   let scrollTimer: NodeJS.Timeout;
@@ -293,6 +323,12 @@ const Index = function(props: IProps) {
         data={{ ids: moveIds, current: folder }}
         type={moveType}
         onSuccess={onMoveSuccess}
+      />
+      {/* 分享文件 */}
+      <Share
+        now={shareDate}
+        data={{ files: shareFils, folders: shareFolders }}
+        onSuccess={onSuccess}
       />
     </>
   );
