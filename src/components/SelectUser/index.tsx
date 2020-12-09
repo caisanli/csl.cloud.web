@@ -37,7 +37,7 @@ export default function(props: IProps) {
   const [users, setUsers] = useState<IUser[]>([]);
   useEffect(() => {
     if (!props.visible) return;
-    setSelectedRowKeys(props.checked);
+    setSelectedRowKeys(props.checked || []);
     query();
   }, [props.visible]);
 
@@ -48,7 +48,7 @@ export default function(props: IProps) {
     });
   }
   // 选择项
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   let rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
