@@ -100,7 +100,6 @@ class Scroll extends React.Component {
     if (window.MutationObserver && !this.observer) {
       this.observer = new MutationObserver(() => {
         this._setThumbWidthHeight();
-        console.log('内容更新...');
         if (typeof this.props.onChange === 'function') {
           let { scrollTop, scrollLeft } = this.$content.current;
           this.props.onChange({
