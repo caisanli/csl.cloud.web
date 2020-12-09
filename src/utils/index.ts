@@ -1,3 +1,5 @@
+import { IUser } from '@/types';
+
 /**
  * 获取相对位置
  * @param elem
@@ -54,7 +56,7 @@ export function msToDate(ms: string): string {
 }
 
 /**
- * 生辰UUID
+ * 生成UUID
  * @export
  * @returns {string}
  */
@@ -64,4 +66,16 @@ export function uuid(): string {
       v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+/**
+ * 返回用户信息
+ * @export
+ * @param {string} [key]
+ * @returns {(string | number | IUser)}
+ */
+export function getUserValue(key?: string): string | number | IUser {
+  let localUserStr: string = localStorage.getItem('user') || '{}';
+  let localUser: any = JSON.parse(localUserStr);
+  return key ? localUser[key] : localUser;
 }
