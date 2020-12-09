@@ -16,10 +16,13 @@ export interface UserModelType {
   };
 }
 
+let localUserStr: string = localStorage.getItem('user') || '{}';
+let localUser: any = JSON.parse(localUserStr);
+
 const IndexModel: UserModelType = {
   namespace: 'user',
   state: {
-    info: {},
+    info: localUser,
     group: 0,
   },
   reducers: {

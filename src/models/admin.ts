@@ -13,11 +13,14 @@ export interface UserModelType {
   };
 }
 
+let localAdminStr: string = localStorage.getItem('admin') || '{}';
+let localAdmin: any = JSON.parse(localAdminStr);
+
 const IndexModel: UserModelType = {
   namespace: 'admin',
   state: {
     update: undefined,
-    name: '',
+    name: localAdmin.name || '',
   },
   reducers: {
     update(state, action) {
@@ -25,7 +28,7 @@ const IndexModel: UserModelType = {
         ...state,
         ...action.payload,
       };
-    }
+    },
   },
 };
 
