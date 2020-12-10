@@ -227,6 +227,9 @@ const Index = function(props: IProps) {
       case 'share':
         share();
         break;
+      case 'download':
+        fileApi.download(idsObj.files);
+        break;
     }
   }
   // 获取
