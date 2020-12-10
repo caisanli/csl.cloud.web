@@ -1,6 +1,7 @@
 import { extend, RequestOptionsInit, ResponseInterceptor } from 'umi-request';
 import { message as Message } from 'antd';
 import { BASE_URL, PREFIX } from './config';
+import { download } from '.';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -21,8 +22,8 @@ const codeMessage = {
 };
 
 const errorHandler = error => {
-  console.log(error)
-  if(!error) throw error ;
+  console.log(error);
+  if (!error) throw error;
   if (error.response) {
     const response = error.response;
     // 请求已发送但服务端返回状态码非 2xx 的响应
@@ -36,45 +37,53 @@ const errorHandler = error => {
   throw error; // 如果throw. 错误将继续抛出.
 };
 
-
 const request = extend({
   errorHandler, // 默认错误处理
   prefix: BASE_URL + PREFIX,
   credentials: 'include', // 默认请求是否带上cookie
-})
+});
 
-request.interceptors.response.use(async (response) => {
+request.interceptors.response.use(async (response, options) => {
   // 克隆响应对象做解析处理
   // 这里的res就是我们请求到的数据
+
   try {
+    if (options.responseType && options.responseType === 'blob') {
+      let blob = await response.blob();
+      let name = response.headers.get('content-disposition');
+      name = name?.split("''")[1] || '';
+      name = decodeURIComponent(name);
+      download(blob, name);
+      return blob;
+    }
+    if (!response.clone) return response;
     const res = await response.clone().json();
     const { code } = res;
-    switch(code) {
+    switch (code) {
       case 1:
         return res;
       case 2:
         return Promise.reject(res);
       default:
-        return Promise.reject({response});
+        return Promise.reject({ response });
     }
   } catch (error) {
     return Promise.reject(error);
   }
-
 });
 
 const get = function(url: string, params?: any, options?: RequestOptionsInit) {
-  return request(url, Object.assign({}, options, { params }))
-}
+  return request(url, Object.assign({}, options, { params }));
+};
 const post = function(url: string, data?: any, options?: RequestOptionsInit) {
-  return request(url, Object.assign({}, options, { data, method: 'POST' }))
-}
+  return request(url, Object.assign({}, options, { data, method: 'POST' }));
+};
 const put = function(url: string, data?: any, options?: RequestOptionsInit) {
-  return request(url, Object.assign({}, options, { data, method: 'PUT' }))
-}
+  return request(url, Object.assign({}, options, { data, method: 'PUT' }));
+};
 const del = function(url: string, params?: any, options?: RequestOptionsInit) {
-  return request(url, Object.assign({}, options, { params, method: 'DELETE' }))
-}
-export { get, post, del, put }
+  return request(url, Object.assign({}, options, { params, method: 'DELETE' }));
+};
+export { get, post, del, put };
 
 export default request;
