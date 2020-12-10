@@ -79,3 +79,27 @@ export function getUserValue(key?: string): string | number | IUser {
   let localUser: any = JSON.parse(localUserStr);
   return key ? localUser[key] : localUser;
 }
+
+/**
+ * 下载文件
+ * @export
+ * @param {Blob} blob
+ * @param {string} name
+ */
+export function download(blob: Blob, name: string): void {
+  blob = new Blob([blob]);
+  if ('download' in document.createElement('a')) {
+    // 非IE下载
+    const link = document.createElement('a');
+    link.download = name;
+    link.style.display = 'none';
+    link.href = URL.createObjectURL(blob);
+    document.body.appendChild(link);
+    link.click();
+    URL.revokeObjectURL(link.href); // 释放URL 对象
+    document.body.removeChild(link);
+  } else {
+    // IE10+下载
+    navigator.msSaveBlob(blob, name);
+  }
+}
