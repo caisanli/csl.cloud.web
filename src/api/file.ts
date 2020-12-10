@@ -111,6 +111,14 @@ export default {
    * @returns
    */
   download(files: string) {
-    return get('/file/folder/download', { files });
+    return get(
+      '/file/folder/download',
+      { files },
+      {
+        responseType: 'blob',
+        getResponse: true,
+        parseResponse: false,
+      },
+    );
   },
 };
