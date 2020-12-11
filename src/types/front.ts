@@ -31,6 +31,7 @@ interface ITableIconProps {
   tools?: any[];
   contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
   columns?: IColumn[];
+  onSelect?: (data: any) => void;
 }
 
 /**
@@ -42,6 +43,7 @@ interface IFileContainerProps {
   canCreateFolder?: boolean;
   type: 'person' | 'group';
   tools?: IToolBar[];
+  page?: IPage;
   contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
   onToolbarSuccess?: (data?: void) => void;
   onClickColumn?: (data: any) => void;
