@@ -14,38 +14,7 @@
     margin-right: 15px;
   }
 }
-// 面包屑
-.crumb {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 10px;
-  &-left {
-    display: flex;
-    align-items: center;
-  }
-  &-item {
-    &-icon {
-      color: @shadow-color;
-      font-size: 12px;
-      margin: 0 3px;
-    }
-    &:last-child {
-      .crumb-item-icon {
-        display: none;
-      }
-    }
-    &:not(:last-child) {
-      .crumb-item-name {
-        cursor: pointer;
-        color: @primary-color;
-        &:hover {
-          text-decoration: underline;
-          color: @link-hover-color;
-        }
-      }
-    }
-  }
-}
+
 .list {
   flex: 1;
   overflow: hidden;

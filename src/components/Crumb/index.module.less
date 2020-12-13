@@ -1,0 +1,27 @@
+// 面包屑
+.crumb {
+  display: flex;
+  padding: 10px 10px;
+  &-item {
+    &-icon {
+      color: @shadow-color;
+      font-size: 12px;
+      margin: 0 3px;
+    }
+    &:last-child {
+      .crumb-item-icon {
+        display: none;
+      }
+    }
+    &:not(:last-child) {
+      .crumb-item-name {
+        cursor: pointer;
+        color: @primary-color;
+        &:hover {
+          text-decoration: underline;
+          color: @link-hover-color;
+        }
+      }
+    }
+  }
+}
