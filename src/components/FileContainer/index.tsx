@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FileModelState, ConnectProps, connect } from 'umi';
 import Scroll from '@/components/Scroll';
 import Toolbar from './toolbar';
 import Crumb from './crumb';
 import IconList from './List/icon';
 import TableList from './List/table';
-import { IContextMenu, IFileContainerProps, IToolBar } from '@/types';
+import {
+  IContextMenu,
+  ICrumbItem,
+  IFileContainerProps,
+  IPage,
+  IToolBar,
+} from '@/types';
 import styles from './index.module.less';
 import { bytesToSize, msToDate } from '@/utils';
 import { delFolder, del } from '@/components/FileOperate';
@@ -41,15 +47,7 @@ const iconStyle = {
   color: '#40a9ff',
 };
 const IndexPage = function(props: IProps) {
-  const {
-    crumbs,
-    onScrollChange,
-    page,
-    file,
-    canCreateFolder,
-    dataSource,
-  } = props;
-  const { folder, no } = file;
+  const { file, canCreateFolder, category, showFolder } = props;
   const List = props.file.style === 'icon' ? IconList : TableList;
   const [elem, setElem] = useState();
   const columns: IColumn[] = [
@@ -91,6 +89,44 @@ const IndexPage = function(props: IProps) {
   function onRef(elem) {
     setElem(elem);
   }
+
+  const [crumbs, setCrumbs] = useState<ICrumbItem[]>([]);
+  const [list, setList] = useState([]);
+  const [page, setPage] = useState<IPage>();
+  const {
+    folder,
+    name,
+    sort: { order, type },
+    no,
+  } = file;
+  // 查询文件
+  async function query() {
+    const {
+      data: { crumbs, files, folders, page },
+    } = await fileApi.query(
+      type,
+      order,
+      no,
+      10,
+      name,
+      showFolder ? folder : '',
+      category,
+    );
+    setPage(page);
+    setCrumbs(crumbs);
+    if (no === 1) {
+      setList(folders.concat(files));
+    } else {
+      setList(list.concat(files));
+    }
+  }
+
+  useEffect(
+    function() {
+      query();
+    },
+    [props.file],
+  );
 
   // 文件夹
   const [fceDate, setFceDate] = useState<number>();
@@ -339,16 +375,16 @@ const IndexPage = function(props: IProps) {
         onSuccess={onSuccess}
       />
       {/* 面包屑 */}
-      {props.crumbs && <Crumb crumbs={crumbs} />}
+      {crumbs && <Crumb crumbs={crumbs} count={list.length} />}
       {/* 列表 */}
       <div className={styles.list} id="list">
-        <Scroll onRef={onRef} onChange={onScrollChange} onScroll={onScroll}>
+        <Scroll onRef={onRef} onScroll={onScroll}>
           <List
             onSelect={onSelect}
             contextMenu={contextMenu}
             columns={columns}
             scrollSelector={elem}
-            dataSource={dataSource}
+            dataSource={list}
           />
         </Scroll>
       </div>
