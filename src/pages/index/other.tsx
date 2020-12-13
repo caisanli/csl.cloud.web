@@ -1,5 +1,12 @@
 import React from 'react';
+import FileContainer from '@/components/FileContainer';
 
-export default function() {
-  return <div>Other</div>;
-}
+const Index = function() {
+  return (
+    <>
+      <FileContainer type="person" category="0" />
+    </>
+  );
+};
+
+export default Index;
