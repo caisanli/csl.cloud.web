@@ -1,4 +1,4 @@
-import { ORDER, SORT } from '@/types';
+import { Category, ORDER, SORT } from '@/types';
 import { get, post, del, put } from '@/utils/request';
 
 export default {
@@ -10,17 +10,19 @@ export default {
    * @param {number} page 当前页
    * @param {number} num 每页多少条
    * @param {string} [name] 文件名称
+   * @param {Category} [category] 分类
    * @returns
    */
   query(
-    folderId: string,
     sort: SORT,
     order: ORDER,
     page: number,
     num: number,
     name?: string,
+    folderId?: string,
+    category?: Category,
   ) {
-    return get('/file', { folderId, sort, order, page, num, name });
+    return get('/file', { folderId, sort, order, page, num, name, category });
   },
   /**
    * 根据ID获取文件
