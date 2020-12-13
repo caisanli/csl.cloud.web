@@ -40,7 +40,7 @@ export function bytesToSize(size: number): string {
  * @param {string} ms
  * @returns {string}
  */
-export function msToDate(ms: string): string {
+export function msToDate(ms: string | Date): string {
   if (!ms) return '';
   let date = new Date(ms);
   let year = date.getFullYear();
@@ -78,6 +78,23 @@ export function getUserValue(key?: string): string | number | IUser {
   let localUserStr: string = localStorage.getItem('user') || '{}';
   let localUser: any = JSON.parse(localUserStr);
   return key ? localUser[key] : localUser;
+}
+
+/**
+ * 检验路径
+ * @export
+ * @param {string} name
+ * @param {((string | RegExp)[])} whites
+ * @returns {boolean}
+ */
+export function testPath(name: string, whites: (string | RegExp)[]): boolean {
+  for (let i = 0; i < whites.length; i++) {
+    let current = whites[i];
+    if (typeof current === 'string') {
+      if (current === name) return true;
+    } else if (current.test(name)) return true;
+  }
+  return false;
 }
 
 /**
