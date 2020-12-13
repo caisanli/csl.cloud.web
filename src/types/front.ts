@@ -35,22 +35,23 @@ interface ITableIconProps {
 }
 
 /**
+ * 分类信息
+ * 0：其它
+ * 1：图片
+ * 2：文档
+ * 3：音乐
+ * 4：视频
+ */
+type Category = '0' | '1' | '2' | '3' | '4';
+
+/**
  * 文件容器
  */
 interface IFileContainerProps {
-  dataSource: any[];
-  crumbs?: ICrumbItem[];
   canCreateFolder?: boolean;
   type: 'person' | 'group';
-  tools?: IToolBar[];
-  page?: IPage;
-  contextMenu?: IContextMenu[] | ((data: any) => IContextMenu[]);
-  onToolbarSuccess?: (data?: void) => void;
-  onClickColumn?: (data: any) => void;
-  onSelect?: (data: any[]) => void;
-  onClickTool?: (data: IToolBar) => void;
-  onScrollChange?: (data: any) => void;
-  onScroll?: (data: any) => void;
+  showFolder?: boolean;
+  category?: Category;
 }
 
 /**
@@ -111,6 +112,7 @@ interface IPage {
 }
 
 export {
+  Category,
   IPage,
   IUploadFile,
   INavItem,

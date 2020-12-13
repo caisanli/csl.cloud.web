@@ -12,7 +12,7 @@ export interface IGroup {
   description?: string;
   userId?: string;
   size: number;
-  user?: IUser
+  user?: IUser;
 }
 
 export interface IFolder {
@@ -30,4 +30,11 @@ export interface IFile {
   category?: string;
   thumbnail?: string;
   size?: number;
+}
+export interface IShare {
+  id: number;
+  type: 'person' | 'link';
+  name: string;
+  userId: string;
+  date: Date;
 }
