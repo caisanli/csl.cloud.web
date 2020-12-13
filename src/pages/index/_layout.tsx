@@ -1,7 +1,18 @@
 import React from 'react';
-import Layout from '@/components/Layouts';
+import { Layout } from 'antd';
+import CustomLayout, { Main } from '@/components/Layouts';
 import { IRouteComponentProps } from 'umi';
+import { testPath } from '@/utils';
+const { Content } = Layout;
+const notAside: (string | RegExp)[] = ['/group', /\/preview\/[\w]+/];
 
 export default (props: IRouteComponentProps) => {
-  return <Layout {...props} />;
+  if (testPath(props.location.pathname, notAside)) {
+    return (
+      <Content>
+        <Main>{props.children}</Main>
+      </Content>
+    );
+  }
+  return <CustomLayout {...props} />;
 };
