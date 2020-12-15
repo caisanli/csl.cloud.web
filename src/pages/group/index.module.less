@@ -1,0 +1,27 @@
+.groups {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding: 0 50px;
+  .group {
+    width: 310px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    margin-right: 1%;
+    margin-bottom: 1%;
+    &-name {
+      padding: 5px 8px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    &-description {
+      padding: 5px 8px;
+      height: 120px;
+      color: #666;
+      // border-bottom: 1px solid #ddd;
+    }
+  }
+}
