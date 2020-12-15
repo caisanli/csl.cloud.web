@@ -96,6 +96,20 @@ export default function() {
       folder: item.id
     })
   }
+  // 滚动刷新
+  let scrollTimer: NodeJS.Timeout;
+  function onScroll(data: any) {
+    if (scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      if (!page) return;
+      if (data.isBottom && data.isDown && page.page < page.count) {
+        setParam({
+          no: param.no + 1,
+          folder: param.folder
+        })
+      }
+    }, 500);
+  }
 
   return (
     <>
@@ -111,7 +125,7 @@ export default function() {
         </Col>
       </Row>
 
-      <Scroll>
+      <Scroll onScroll={onScroll} onChange={onScroll}>
         <Table
           dataIndex='id'
           columns={columns}

@@ -378,7 +378,7 @@ const IndexPage = function(props: IProps) {
       {crumbs && <Crumb crumbs={crumbs} count={list.length} />}
       {/* 列表 */}
       <div className={styles.list} id="list">
-        <Scroll onRef={onRef} onScroll={onScroll}>
+        <Scroll onRef={onRef} onScroll={onScroll} onChange={onScroll}>
           <List
             onSelect={onSelect}
             contextMenu={contextMenu}
