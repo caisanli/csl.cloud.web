@@ -18,12 +18,13 @@ export interface UserModelType {
 
 let localUserStr: string = localStorage.getItem('user') || '{}';
 let localUser: any = JSON.parse(localUserStr);
+let localGroup: number = Number(localStorage.getItem('group')) || 0;
 
 const IndexModel: UserModelType = {
   namespace: 'user',
   state: {
     info: localUser,
-    group: 0,
+    group: localGroup,
   },
   reducers: {
     updateInfo(state, action) {
