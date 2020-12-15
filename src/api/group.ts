@@ -28,7 +28,7 @@ export default {
     return get('/group/' + id);
   },
   // 根据用户获取对应团队
-  getByUser(userId: string) {
-    return get('/group/user/' + userId);
+  getByUser() {
+    return get('/group/query/byUser');
   },
 };
