@@ -61,7 +61,7 @@ class Scroll extends React.Component {
     document.removeEventListener('mousemove', this._onYMouseMove);
     document.removeEventListener('mouseup', this._onMouseup);
     window.removeEventListener('resize', this._onResize);
-    this.observer.disconnect();
+    this.observer && this.observer.disconnect();
   }
   _setScrollCenter() {
     // 设置
