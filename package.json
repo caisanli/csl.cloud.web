@@ -28,7 +28,12 @@
     "prettier": "^1.19.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-pdf": "^5.1.0",
     "umi": "^3.2.24",
+    "video.js": "^7.10.2",
     "yorkie": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/video.js": "^7.3.11"
   }
 }
