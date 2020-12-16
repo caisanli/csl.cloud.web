@@ -26,8 +26,8 @@ import {
   ScissorOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
-import { Folder, Rename, Share } from '../FileOperate';
-import Move from '../FileOperate/Move';
+import { Folder, Rename, Share, Move } from '../FileOperate';
+import Video from '@/components/Preview/video';
 import {
   copyBtn,
   delBtn,
@@ -144,7 +144,8 @@ const IndexPage = function(props: IProps) {
       no: 1,
     });
   }
-
+  const [videoVisible, setVideoVisible] = useState<boolean>(false);
+  const [videoSrc, setVideoSrc] = useState<string>('');
   // 点击项
   function onClickColumn(data: any) {
     if (data.parentId) {
@@ -155,6 +156,12 @@ const IndexPage = function(props: IProps) {
       });
     } else {
       // 点击了文件
+      switch (data.category) {
+        case '4':
+          setVideoSrc(fileApi.preview(data.id));
+          setVideoVisible(true);
+          break;
+      }
     }
   }
 
@@ -415,6 +422,12 @@ const IndexPage = function(props: IProps) {
         now={shareDate}
         data={{ files: shareFils, folders: shareFolders }}
         onSuccess={onSuccess}
+      />
+      {/* 视频预览 */}
+      <Video
+        onCancel={() => setVideoVisible(false)}
+        visible={videoVisible}
+        url={videoSrc}
       />
     </>
   );
