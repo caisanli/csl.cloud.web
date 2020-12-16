@@ -1,5 +1,6 @@
 import { Category, ORDER, SORT } from '@/types';
 import { get, post, del, put } from '@/utils/request';
+import { BASE_URL, PREFIX } from '@/utils/config';
 
 export default {
   /**
@@ -122,5 +123,8 @@ export default {
         parseResponse: false,
       },
     );
+  },
+  preview(id: string): string {
+    return BASE_URL + PREFIX + '/file/preview/' + id;
   },
 };
