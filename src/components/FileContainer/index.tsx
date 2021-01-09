@@ -28,6 +28,7 @@ import {
 } from '@ant-design/icons';
 import { Folder, Rename, Share, Move } from '../FileOperate';
 import Video from '@/components/Preview/video';
+import Pdf from '@/components/Preview/pdf';
 import {
   copyBtn,
   delBtn,
@@ -146,6 +147,9 @@ const IndexPage = function(props: IProps) {
   }
   const [videoVisible, setVideoVisible] = useState<boolean>(false);
   const [videoSrc, setVideoSrc] = useState<string>('');
+
+  const [pdfVisible, setPdfVisible] = useState<boolean>(false);
+  const [pdfSrc, setPdfSrc] = useState<string>('');
   // 点击项
   function onClickColumn(data: any) {
     if (data.parentId) {
@@ -160,6 +164,10 @@ const IndexPage = function(props: IProps) {
         case '4':
           setVideoSrc(fileApi.preview(data.id));
           setVideoVisible(true);
+          break;
+        case '2':
+          setPdfSrc(fileApi.preview(data.id));
+          setPdfVisible(true);
           break;
       }
     }
@@ -428,6 +436,12 @@ const IndexPage = function(props: IProps) {
         onCancel={() => setVideoVisible(false)}
         visible={videoVisible}
         url={videoSrc}
+      />
+      {/* 视频预览 */}
+      <Pdf
+        onCancel={() => setPdfVisible(false)}
+        visible={pdfVisible}
+        url={pdfSrc}
       />
     </>
   );

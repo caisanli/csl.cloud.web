@@ -34,6 +34,7 @@
     "yorkie": "^2.0.0"
   },
   "devDependencies": {
+    "@types/react-pdf": "^5.0.0",
     "@types/video.js": "^7.3.11"
   }
 }
