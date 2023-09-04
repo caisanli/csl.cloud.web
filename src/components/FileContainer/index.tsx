@@ -13,16 +13,12 @@ import {
   IToolBar,
 } from '@/types';
 import styles from './index.module.less';
-import { bytesToSize, msToDate } from '@/utils';
 import { delFolder, del } from '@/components/FileOperate';
-import { IColumn } from '@/components/Table';
 import {
   CopyOutlined,
   DeleteOutlined,
   DownloadOutlined,
   EditOutlined,
-  FileOutlined,
-  FolderOutlined,
   ScissorOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
@@ -37,55 +33,19 @@ import {
   shareBtn,
 } from '@/components/FileContainer/tools';
 import fileApi from '@/api/file';
+import { getBaseColumns } from './columns';
 
 interface IProps extends IFileContainerProps {}
 interface IProps extends ConnectProps {
   file: FileModelState;
 }
-const iconStyle = {
-  fontSize: '18px',
-  verticalAlign: 'sub',
-  color: '#40a9ff',
-};
+
 const IndexPage = function(props: IProps) {
   const { file, canCreateFolder, category, showFolder } = props;
   const List = props.file.style === 'icon' ? IconList : TableList;
   const [elem, setElem] = useState();
-  const columns: IColumn[] = [
-    {
-      key: '00',
-      width: 40,
-      render(data: any) {
-        if (data.parentId) return <FolderOutlined style={iconStyle} />;
-        return <FileOutlined style={iconStyle} />;
-      },
-    },
-    {
-      key: '01',
-      label: '文件名',
-      value: 'name',
-      width: '50%',
-      link: true,
-      ellipsis: true,
-      onClickLink: onClickColumn,
-    },
-    {
-      key: '02',
-      label: '大小',
-      value: 'size',
-      render(data: any) {
-        return <>{bytesToSize(data.size)}</>;
-      },
-    },
-    {
-      key: '03',
-      label: '修改日期',
-      value: 'modifyDate',
-      render(data: any) {
-        return <>{msToDate(data.modifyDate)}</>;
-      },
-    },
-  ];
+  // 表格项
+  const columns = getBaseColumns(onClickColumn);
 
   function onRef(elem) {
     setElem(elem);

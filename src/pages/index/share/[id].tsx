@@ -6,56 +6,17 @@ import Scroll from '@/components/Scroll';
 import shareApi from '@/api/share';
 import fileApi from '@/api/file';
 import { ICrumbItem, IPage } from '@/types';
-import Table, { IColumn } from '@/components/Table';
-import { FileOutlined, FolderOutlined } from '@ant-design/icons';
-import { bytesToSize, msToDate } from '@/utils';
-const iconStyle = {
-  fontSize: '18px',
-  verticalAlign: 'sub',
-  color: '#40a9ff',
-};
+import Table from '@/components/Table';
+import { getBaseColumns } from '@/components/FileContainer/columns';
+
 export default function() {
   const params = useParams<{id: string}>()
   const [param, setParam] = useState<{folder: string, no: number}>({folder: '0', no: 1});
   const [list, setList] = useState([]);
   const [crumbs, setCrumbs] = useState<ICrumbItem[]>([]);
   const [page, setPage] = useState<IPage>({page: 1, total: 0, count: 0});
-  const columns: IColumn[] = [
-    {
-      key: '00',
-      width: 40,
-      render(data: any) {
-        if (data.parentId) return <FolderOutlined style={iconStyle} />;
-        return <FileOutlined style={iconStyle} />;
-      },
-    },
-    {
-      key: '01',
-      label: '文件名',
-      value: 'name',
-      width: '50%',
-      link: true,
-      ellipsis: true,
-      onClickLink: onClickColumn,
-    },
-    {
-      key: '02',
-      label: '大小',
-      value: 'size',
-      render(data: any) {
-        return <>{bytesToSize(data.size)}</>;
-      },
-    },
-    {
-      key: '03',
-      label: '修改日期',
-      value: 'modifyDate',
-      render(data: any) {
-        return <>{msToDate(data.modifyDate)}</>;
-      },
-    },
-  ];
-
+  // 表格项
+  const columns = getBaseColumns(onClickColumn);
   function onClickColumn(data: any) {
     if(data.parentId) {
       setParam({
@@ -63,7 +24,6 @@ export default function() {
         folder: data.id
       })
     }
-
   }
 
   useEffect(() => {
