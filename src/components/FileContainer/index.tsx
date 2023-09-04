@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileModelState, ConnectProps, connect } from 'umi';
+import { FileModelState, UserModelState, ConnectProps, connect } from 'umi';
 import Scroll from '@/components/Scroll';
 import Toolbar from './toolbar';
 import Crumb from './crumb';
@@ -38,16 +38,19 @@ import { getBaseColumns } from './columns';
 interface IProps extends IFileContainerProps {}
 interface IProps extends ConnectProps {
   file: FileModelState;
+  user: UserModelState;
 }
 
 const IndexPage = function(props: IProps) {
-  const { file, canCreateFolder, category, showFolder } = props;
+  const { file, user, canCreateFolder, category, showFolder } = props;
+  const containerType = props.type;
   const List = props.file.style === 'icon' ? IconList : TableList;
-  const [elem, setElem] = useState();
+  const [elem, setElem] = useState<HTMLElement>();
+
   // 表格项
   const columns = getBaseColumns(onClickColumn);
 
-  function onRef(elem) {
+  function onRef(elem: HTMLElement) {
     setElem(elem);
   }
 
@@ -60,8 +63,32 @@ const IndexPage = function(props: IProps) {
     sort: { order, type },
     no,
   } = file;
-  // 查询文件
-  async function query() {
+
+  /**
+   * 查询文件
+   */
+  function query() {
+    switch (containerType) {
+      case 'person':
+        queryPerson();
+        break;
+      case 'group':
+        queryGroup();
+        break;
+    }
+  }
+
+  /**
+   * 查询团队文件
+   */
+  async function queryGroup() {
+    console.log('groupId：', user.group);
+  }
+
+  /**
+   * 查询个人文件
+   */
+  async function queryPerson() {
     const {
       data: { crumbs, files, folders, page },
     } = await fileApi.query(
@@ -408,5 +435,6 @@ const IndexPage = function(props: IProps) {
 };
 const mapStateProps = state => ({
   file: state.file,
+  user: state.user,
 });
 export default connect(mapStateProps)(IndexPage);

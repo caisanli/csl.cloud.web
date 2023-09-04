@@ -19,7 +19,7 @@ const IndexPage = function(props: IProps) {
           group: g.id,
         },
       });
-    localStorage.setItem('group', g.id || '0');
+    localStorage.setItem('group', g.id + '');
     history.push('/group/file');
   }
   useEffect(() => {

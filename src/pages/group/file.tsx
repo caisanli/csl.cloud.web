@@ -1,5 +1,8 @@
 import React from 'react';
+import FileContainer from '@/components/FileContainer';
 
-export default function() {
-  return <div>group file</div>;
-}
+const Index = function() {
+  return <FileContainer type="group" canCreateFolder showFolder />;
+};
+
+export default Index;

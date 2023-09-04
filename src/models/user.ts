@@ -4,7 +4,7 @@ export interface UserModelState {
   info: {
     [key: string]: any;
   };
-  group: number;
+  group?: number;
 }
 
 export interface UserModelType {
@@ -18,7 +18,7 @@ export interface UserModelType {
 
 let localUserStr: string = localStorage.getItem('user') || '{}';
 let localUser: any = JSON.parse(localUserStr);
-let localGroup: number = Number(localStorage.getItem('group')) || 0;
+const localGroup = Number(localStorage.getItem('group'));
 
 const IndexModel: UserModelType = {
   namespace: 'user',
