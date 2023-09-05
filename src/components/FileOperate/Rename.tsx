@@ -3,7 +3,8 @@ import { message } from 'antd';
 import Form, { IFieldProps } from '@/components/Form';
 import Modal from '@/components/Modal';
 import { IFormInstance, IOperateProps } from '@/types';
-import api from '@/api/file';
+import fileApi from '@/api/file';
+import groupFileApi from '@/api/groupFile';
 const fieldData: IFieldProps[] = [
   {
     key: 'name',
@@ -17,12 +18,12 @@ const fieldData: IFieldProps[] = [
 
 export default function(props: IOperateProps) {
   const [visible, setVisible] = useState<boolean>(false);
-  const { now, data, id, onSuccess } = props;
+  const { now, groupId, data, id, onSuccess } = props;
   const form = useRef<IFormInstance>();
   function onSubmit() {
     if (!form.current || !id) return;
     form.current.validateFields().then(values => {
-      api.rename(id, values.name).then(() => {
+      (groupId ? groupFileApi : fileApi).rename(id, values.name).then(() => {
         setVisible(false);
         message.success('修改成功');
         onSuccess && onSuccess();

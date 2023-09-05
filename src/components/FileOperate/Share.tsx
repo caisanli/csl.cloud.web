@@ -7,9 +7,14 @@ import api from '@/api/share';
 
 export default function(props: IOperateProps) {
   const [visible, setVisible] = useState<boolean>(false);
-
   useEffect(() => {
-    if (props.now) setVisible(true);
+    if (props.now) {
+      if (props.groupId) {
+        message.warn('团队暂不支持分享');
+        return;
+      }
+      setVisible(true);
+    }
   }, [props.now]);
 
   function onOk(users: IUser[]) {

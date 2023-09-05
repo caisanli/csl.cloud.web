@@ -33,6 +33,7 @@ import {
   shareBtn,
 } from '@/components/FileContainer/tools';
 import fileApi from '@/api/file';
+import groupFileApi from '@/api/groupFile';
 import { getBaseColumns } from './columns';
 
 interface IProps extends IFileContainerProps {}
@@ -44,6 +45,10 @@ interface IProps extends ConnectProps {
 const IndexPage = function(props: IProps) {
   const { file, user, canCreateFolder, category, showFolder } = props;
   const containerType = props.type;
+  // 是否是团队列表
+  const isGroup = containerType === 'group';
+  const groupId = isGroup ? user.group : undefined;
+  const api = isGroup ? groupFileApi : fileApi;
   const List = props.file.style === 'icon' ? IconList : TableList;
   const [elem, setElem] = useState<HTMLElement>();
 
@@ -82,7 +87,28 @@ const IndexPage = function(props: IProps) {
    * 查询团队文件
    */
   async function queryGroup() {
-    console.log('groupId：', user.group);
+    console.log('showFolder：', showFolder);
+    console.log('folder：', folder);
+    const {
+      data: { crumbs, files, folders, page },
+    } = await groupFileApi.query(
+      user.group || 0,
+      type,
+      order,
+      no,
+      10,
+      name,
+      showFolder ? folder : '',
+      category,
+    );
+
+    setPage(page);
+    setCrumbs(crumbs);
+    if (no === 1) {
+      setList(folders.concat(files));
+    } else {
+      setList(list.concat(files));
+    }
   }
 
   /**
@@ -149,11 +175,11 @@ const IndexPage = function(props: IProps) {
       // 点击了文件
       switch (data.category) {
         case '4':
-          setVideoSrc(fileApi.preview(data.id));
+          setVideoSrc(api.preview(data.id));
           setVideoVisible(true);
           break;
         case '2':
-          setPdfSrc(fileApi.preview(data.id));
+          setPdfSrc(api.preview(data.id));
           setPdfVisible(true);
           break;
       }
@@ -176,7 +202,7 @@ const IndexPage = function(props: IProps) {
       value: 'delete',
       icon: <DeleteOutlined />,
       onClick(data: any) {
-        delFolder(data.id, onSuccess);
+        delFolder(data.id, groupId, onSuccess);
       },
     },
     {
@@ -207,7 +233,7 @@ const IndexPage = function(props: IProps) {
       value: 'delete',
       icon: <DeleteOutlined />,
       onClick(data: any) {
-        del(data.id, '', onSuccess);
+        del(data.id, '', groupId, onSuccess);
       },
     },
     {
@@ -215,7 +241,7 @@ const IndexPage = function(props: IProps) {
       value: 'download',
       icon: <DownloadOutlined />,
       onClick(data: any) {
-        fileApi.download(data.id);
+        api.download(data.id);
       },
     },
     {
@@ -345,13 +371,13 @@ const IndexPage = function(props: IProps) {
         move(tool.type);
         break;
       case 'delete':
-        del(idsObj.files, idsObj.folders, onSuccess);
+        del(idsObj.files, idsObj.folders, groupId, onSuccess);
         break;
       case 'share':
         share();
         break;
       case 'download':
-        fileApi.download(idsObj.files);
+        api.download(idsObj.files);
         break;
     }
   }
@@ -373,6 +399,7 @@ const IndexPage = function(props: IProps) {
       <Toolbar
         tools={tools}
         canCreateFolder={canCreateFolder}
+        groupId={groupId}
         onClick={onClickTool}
         onSuccess={onSuccess}
       />
@@ -394,6 +421,7 @@ const IndexPage = function(props: IProps) {
       <Folder
         now={fceDate}
         id={fId}
+        groupId={groupId}
         data={{ parentId: folder }}
         type="update"
         onSuccess={onSuccess}
@@ -402,12 +430,14 @@ const IndexPage = function(props: IProps) {
       <Rename
         id={fileId}
         now={renameDate}
+        groupId={groupId}
         data={{ name: fileName }}
         onSuccess={onSuccess}
       />
       {/* 移动/复制文件 */}
       <Move
         now={moveDate}
+        groupId={groupId}
         data={{ ids: moveIds, current: folder }}
         type={moveType}
         onSuccess={onMoveSuccess}
@@ -415,6 +445,7 @@ const IndexPage = function(props: IProps) {
       {/* 分享文件 */}
       <Share
         now={shareDate}
+        groupId={groupId}
         data={{ files: shareFils, folders: shareFolders }}
         onSuccess={onSuccess}
       />

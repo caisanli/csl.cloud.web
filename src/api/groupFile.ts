@@ -16,7 +16,7 @@ export default {
    * @returns
    */
   query(
-    groupId: string,
+    groupId: number,
     sort: SORT,
     order: ORDER,
     page: number,

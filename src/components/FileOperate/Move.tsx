@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { message } from 'antd';
-import Modal from '@/components/Modal';
 import ChooseFolder from './ChooseFolder';
 import { IOperateProps } from '@/types';
-import api from '@/api/file';
+import fileApi from '@/api/file';
+import groupFileApi from '@/api/file';
 
 export default function(props: IOperateProps) {
   const [visible, setVisible] = useState<boolean>(false);
-  const { type, id, now, data } = props;
-
+  const { type, groupId, id, now, data } = props;
+  const api = groupId ? groupFileApi : fileApi;
   useEffect(() => {
-    if(!now) return ;
+    if (!now) return;
     setVisible(true);
-  }, [props.now])
+  }, [props.now]);
 
   async function onOk(folder: string) {
-    if(!data) return message.error('须传入“data”参数');
-    if(!data.current) return message.error('须传入“data.current”参数');
-    if(folder === data.current)
-      return message.error('当前目录和目标目录相同');
-    switch(type) {
+    if (!data) return message.error('须传入“data”参数');
+    if (!data.current) return message.error('须传入“data.current”参数');
+    if (folder === data.current) return message.error('当前目录和目标目录相同');
+    switch (type) {
       case 'move':
         await api.move(data.ids, folder);
         message.success('移动成功');
@@ -35,9 +34,10 @@ export default function(props: IOperateProps) {
 
   return (
     <ChooseFolder
-      visible={ visible }
-      onOk={ onOk }
-      onCancel={ () => setVisible(false) }
+      visible={visible}
+      groupId={groupId}
+      onOk={onOk}
+      onCancel={() => setVisible(false)}
     />
-  )
+  );
 }

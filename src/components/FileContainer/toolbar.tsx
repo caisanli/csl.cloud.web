@@ -18,6 +18,7 @@ const { Search } = Input;
 
 interface IProps extends ConnectProps {
   file: FileModelState;
+  groupId?: number;
   canCreateFolder?: boolean;
   tools?: IToolBar[];
   onClick?: (data: IToolBar) => void;
@@ -25,7 +26,7 @@ interface IProps extends ConnectProps {
 }
 
 const IndexPage = function(props: IProps) {
-  const { file, onSuccess } = props;
+  const { file, groupId, onSuccess } = props;
   /**
    * 点击工具栏按钮
    * @param tool
@@ -106,13 +107,16 @@ const IndexPage = function(props: IProps) {
   function onCreateFolder() {
     setFceDate(Date.now());
   }
+  // 上传接口
+  const uploadAction = groupId ? '/group/file/upload' : '/file/upload';
   return (
     <div className={styles.toolbar}>
       <div className={styles.toolbarLeft}>
         <Upload
-          action="/file/upload"
+          action={uploadAction}
           data={{
             folder: file.folder,
+            group: groupId,
           }}
           style={{
             marginRight: '15px',

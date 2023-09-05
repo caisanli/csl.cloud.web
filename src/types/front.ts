@@ -81,6 +81,7 @@ interface IOperateProps {
   now?: number;
   id?: string;
   type?: string;
+  groupId?: number;
   data?: {
     [key: string]: any;
   };

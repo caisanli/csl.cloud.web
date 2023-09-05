@@ -3,7 +3,8 @@ import Form, { IFieldProps } from '@/components/Form';
 import Modal from '@/components/Modal';
 import { message } from 'antd';
 import { IFormInstance, IOperateProps } from '@/types';
-import api from '@/api/folder';
+import folderApi from '@/api/folder';
+import groupFolderApi from '@/api/groupFolder';
 
 const fieldData: IFieldProps[] = [
   {
@@ -27,8 +28,9 @@ const fieldData: IFieldProps[] = [
 
 export default function(props: IOperateProps) {
   const [mVisible, setVisible] = useState<boolean>(false);
-  const { type, now, data, id, onSuccess } = props;
+  const { type, groupId, now, data, id, onSuccess } = props;
   const form = useRef<IFormInstance>();
+  const api = groupId ? groupFolderApi : folderApi;
 
   useEffect(() => {
     if (!now) return;
@@ -51,10 +53,19 @@ export default function(props: IOperateProps) {
       form.current.validateFields().then(async (values: any) => {
         let { name, description } = values;
         if (type === 'create') {
-          await api.create(data?.parentId, name, description);
+          await (groupId
+            ? groupFolderApi.create(
+                data?.parentId,
+                groupId || 0,
+                name,
+                description,
+              )
+            : folderApi.create(data?.parentId, name, description));
           message.success('创建成功');
         } else if (id) {
-          await api.update(id, name, description);
+          await (groupId
+            ? groupFolderApi.update(id, name, groupId || 0, description)
+            : folderApi.update(id, name, description));
           message.success('更新成功');
         }
         setVisible(false);

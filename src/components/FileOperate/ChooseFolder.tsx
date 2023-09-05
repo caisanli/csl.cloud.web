@@ -3,12 +3,14 @@ import { Breadcrumb, Tree } from 'antd';
 import Table, { IColumn } from '@/components/Table';
 import Scroll from '@/components/Scroll';
 import Modal from '@/components/Modal';
-import api from '@/api/folder';
+import folderApi from '@/api/folder';
+import groupFolderApi from '@/api/groupFolder';
 import { ICrumbItem, IFolder } from '@/types';
 import { FolderOutlined } from '@ant-design/icons';
 interface IProps {
   title?: string;
   visible: boolean;
+  groupId?: number;
   folder?: string;
   data?: any[];
   crumbs?: any[];
@@ -19,11 +21,11 @@ interface IProps {
 const iconStyle = {
   fontSize: '18px',
   fontWeight: 400,
-  verticalAlign: 'sub'
+  verticalAlign: 'sub',
 };
 
 export default function(props: IProps) {
-  const { visible, title } = props;
+  const { visible, groupId, title } = props;
 
   const [folder, setFolder] = useState<string>(props.folder || '');
   const [list, setList] = useState<IFolder[]>([]);
@@ -34,7 +36,7 @@ export default function(props: IProps) {
       key: 'icon',
       width: '35px',
       render() {
-        return <FolderOutlined style={ iconStyle } />;
+        return <FolderOutlined style={iconStyle} />;
       },
     },
     {
@@ -61,12 +63,17 @@ export default function(props: IProps) {
   async function query() {
     const {
       data: { folders, crumbs },
-    } = await api.getChildren(folder);
+    } = await (groupId
+      ? groupFolderApi.getChildren(folder, groupId)
+      : folderApi.getChildren(folder));
     setList(folders);
     setCrumbs(crumbs);
   }
 
-  function onClickCrumb(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, item: ICrumbItem) {
+  function onClickCrumb(
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    item: ICrumbItem,
+  ) {
     e.stopPropagation();
     setFolder(item.id);
   }
@@ -77,15 +84,21 @@ export default function(props: IProps) {
 
   return (
     <Modal
-      title={ title || '选择文件夹' }
-      visible={ visible }
-      onOk={ onOk }
-      onCancel={ props.onCancel }
+      title={title || '选择文件夹'}
+      visible={visible}
+      onOk={onOk}
+      onCancel={props.onCancel}
     >
       <Breadcrumb style={{ marginBottom: '5px' }}>
         {crumbs.map(item => (
           <Breadcrumb.Item key={item.id}>
-            <a onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => onClickCrumb(e, item)}>{ item.name }</a>
+            <a
+              onClick={(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) =>
+                onClickCrumb(e, item)
+              }
+            >
+              {item.name}
+            </a>
           </Breadcrumb.Item>
         ))}
       </Breadcrumb>
@@ -93,14 +106,12 @@ export default function(props: IProps) {
         <Scroll>
           <Table
             hiddenHead
-            dataSource={ list }
+            dataSource={list}
             dataIndex="id"
-            columns={ columns }
+            columns={columns}
           />
         </Scroll>
-
       </div>
-
     </Modal>
   );
 }

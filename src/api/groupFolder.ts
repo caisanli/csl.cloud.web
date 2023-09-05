@@ -5,14 +5,14 @@ export default {
   /**
    * 创建
    * @param {string} parentId
-   * @param {string} groupId
+   * @param {number} groupId
    * @param {string} name
    * @param {string} [description='']
    * @returns {Promise<any>}
    */
   create(
     parentId: string,
-    groupId: string,
+    groupId: number,
     name: string,
     description: string = '',
   ): Promise<Result> {
@@ -22,14 +22,14 @@ export default {
    * 更新
    * @param {string} id
    * @param {string} name
-   * @param {string} groupId
+   * @param {number} groupId
    * @param {string} [description='']
    * @returns {Promise<Result>}
    */
   update(
     id: string,
     name: string,
-    groupId: string,
+    groupId: number,
     description: string = '',
   ): Promise<Result> {
     return put('/group/folder/' + id, { name, groupId, description });
@@ -56,7 +56,7 @@ export default {
    * @param {string} groupId
    * @returns {Promise<Result>}
    */
-  getChildren(id: string, groupId: string): Promise<Result> {
+  getChildren(id: string, groupId: number): Promise<Result> {
     return get('/group/folder/' + id + '/children', { groupId });
   },
 };
