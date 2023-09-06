@@ -3,12 +3,11 @@ import { message } from 'antd';
 import ChooseFolder from './ChooseFolder';
 import { IOperateProps } from '@/types';
 import fileApi from '@/api/file';
-import groupFileApi from '@/api/file';
+import groupFileApi from '@/api/groupFile';
 
 export default function(props: IOperateProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const { type, groupId, id, now, data } = props;
-  const api = groupId ? groupFileApi : fileApi;
   useEffect(() => {
     if (!now) return;
     setVisible(true);
@@ -20,11 +19,15 @@ export default function(props: IOperateProps) {
     if (folder === data.current) return message.error('当前目录和目标目录相同');
     switch (type) {
       case 'move':
-        await api.move(data.ids, folder);
+        await (groupId
+          ? groupFileApi.move(data.ids, folder, groupId)
+          : fileApi.move(data.ids, folder));
         message.success('移动成功');
         break;
       case 'copy':
-        await api.copy(data.ids, folder);
+        await (groupId
+          ? groupFileApi.copy(data.ids, folder, groupId)
+          : fileApi.copy(data.ids, folder));
         message.success('拷贝成功');
         break;
     }

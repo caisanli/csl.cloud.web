@@ -102,25 +102,27 @@ export default {
    * @returns
    */
   remove(fileIds: string = '', folderIds: string = '') {
-    return del('/group/file', { fileIds, folderIds });
+    return del('/group/file/del', { fileIds, folderIds });
   },
   /**
    * 移动文件
    * @param {string} ids 文件集合 逗号分隔
    * @param {string} folderId 文件夹ID
+   * @param groupId
    * @returns
    */
-  move(ids: string, folderId: string) {
-    return put('/group/file/move', { ids, folderId });
+  move(ids: string, folderId: string, groupId: number) {
+    return put('/group/file/move', { ids, folderId, groupId });
   },
   /**
    * 复制文件
    * @param {string} ids
    * @param {string} folderId
+   * @param groupId
    * @returns
    */
-  copy(ids: string, folderId: string) {
-    return put('/group/file/copy', { ids, folderId });
+  copy(ids: string, folderId: string, groupId: number) {
+    return put('/group/file/copy', { ids, folderId, groupId });
   },
   /**
    * 下载文件
