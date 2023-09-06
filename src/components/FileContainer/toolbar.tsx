@@ -168,6 +168,7 @@ const IndexPage = function(props: IProps) {
       {/* 创建文件夹 */}
       <Folder
         now={fceDate}
+        groupId={groupId}
         data={{ parentId: file.folder }}
         type="create"
         onSuccess={onSuccess}
