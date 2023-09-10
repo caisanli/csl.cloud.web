@@ -83,13 +83,15 @@ const IndexPage: FC<IProps> = ({ dispatch }) => {
 
   return (
     <div className={styles.login}>
-      <Form
-        className={styles.loginForm}
-        labelCol={{ span: 5 }}
-        fieldData={fieldData}
-        ref={(form: IFormInstance) => (formIns = form)}
-        onFinish={onFinish}
-      />
+      <div className={styles.loginForm}>
+        <Form
+          layout="vertical"
+          fieldData={fieldData}
+          ref={(form: IFormInstance) => (formIns = form)}
+          onFinish={onFinish}
+        />
+      </div>
+      <div className={styles.loginMask}></div>
     </div>
   );
 };
