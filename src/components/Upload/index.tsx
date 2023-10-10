@@ -112,6 +112,7 @@ class Index extends React.Component<IUploadProps, State> {
 
   // 上传前
   uploadBefore(file: IUploadFile, callback: () => void) {
+    // 确定总的分片数量
     const chunks = Math.ceil(file.size / this.CHUNK_SIZE);
     this.upload(chunks, file, 0, callback);
   }
@@ -151,7 +152,7 @@ class Index extends React.Component<IUploadProps, State> {
           let process = res.data.process;
           file.process = process;
           this.setFileStatus(file.id, {
-            process ,
+            process,
             status: 'pending',
           });
           this.upload(total, file, index, callback);

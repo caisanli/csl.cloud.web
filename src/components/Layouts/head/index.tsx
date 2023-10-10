@@ -63,7 +63,7 @@ const IndexPage: FC<IProps> = props => {
   return (
     <div className={styles.head}>
       <div className={styles.headLeft}>
-        <div className={styles.headLogo}>LOGO</div>
+        <div className={styles.headLogo}>Disk</div>
         <div className={styles.headNav}>
           {nav.map((item: INavItem) => (
             <div
